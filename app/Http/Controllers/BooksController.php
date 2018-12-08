@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Book;
 
 class BooksController extends Controller
 {
@@ -11,9 +12,16 @@ class BooksController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $books = Book::where('title', 'like', "%$request->keyword%")
+            ->orWhere('author', 'like', "%$request->keyword%")
+            ->orWhere('isbn', 'like', "%$request->keyword%")
+            ->orWhere('type_id', 'like', "%$request->keyword%")
+            ->get();
+        return response()->json([
+            'books' => $books
+        ], 200);
     }
 
     /**
