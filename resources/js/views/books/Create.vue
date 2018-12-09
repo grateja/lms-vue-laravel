@@ -71,32 +71,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="dewey">Dewey : <button type="button" class="btn btn-sm btn-default" v-text="newDewey ? 'browse from list' : 'create new'" @click.prevent="newDewey = !newDewey"></button></label>
+                    <label for="dewey">Dewey :</label>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <input type="text" id="decimal" v-model="book.dewey.decimal" class="form-control" @keyup="searchDewey($event.target.value)" autocomplete="off">
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <input type="text" id="classification" v-model="book.dewey.classification" class="form-control" @keyup="searchDewey($event.target.value)" autocomplete="off">
+                        </div>
 
-                    <div v-if="!newDewey">
-                        <blockquote class="alert-info">Start typing and select from dropdown list</blockquote>
-                        <input type="text" id="dewey" class="form-control" v-model="dewey" autocomplete="off" @keyup="searchDewey">
-
-                        <ul v-show="deweys.length > 0">
-                            <li v-for="(de, i) in deweys" :key="i" v-text="`${de.decimal} - ${de.classification}`" @click="selectDewey(de)"></li>
-                        </ul>
-                    </div>
-                    <div v-else>
-                        <blockquote class="alert-info">Specify new dewey decimal value</blockquote>
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <input type="text" id="decimal" v-model="book.dewey.decimal" class="form-control">
-                            </div>
-                            
-                            <div class="col-sm-4">
-                                <input type="text" id="classification" v-model="book.dewey.classification" class="form-control">
-                            </div>
-
-                            <div class="col-sm-6">
-                                <input type="text" id="description" v-model="book.dewey.description" class="form-control">
-                            </div>
+                        <div class="col-sm-6">
+                            <input type="text" id="description" v-model="book.dewey.description" class="form-control" disabled>
                         </div>
                     </div>
+                    <ul v-show="deweys.length > 0">
+                        <li v-for="(d, i) in deweys" :key="i" v-text="`${d.decimal} - ${d.classification}`" @click="selectDewey(d)"></li>
+                    </ul>
                 </div>
 
                 <div class="form-group">
@@ -126,7 +117,6 @@ export default {
             publishing_places: [],
             deweys: [],
             dewey: '',
-            newDewey: false,
             errors: FormHelpers
         }
     },
@@ -178,12 +168,13 @@ export default {
             this.book.publishing_place = place;
             this.publishing_places = [];
         },
-        searchDewey(){
-            if(this.dewey.length > 0){
+        searchDewey(keyword){
+            if(keyword.length > 0){
                 this.book.dewey_id = null;
                 axios.get('/api/deweys', {
-                    params: {keyword: this.dewey}
+                    params: {keyword: keyword}
                 }).then((res, rej) => {
+                    console.log(res.data);
                     this.deweys = res.data.deweys;
                 })
             } else {
@@ -193,7 +184,6 @@ export default {
         selectDewey(dewey) {
             this.book.dewey_id = dewey.id;
             this.book.dewey = dewey;
-            this.dewey = `${dewey.decimal} - ${dewey.classification}`;
             this.deweys = [];
         }
     },

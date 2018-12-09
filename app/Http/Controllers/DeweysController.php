@@ -17,6 +17,7 @@ class DeweysController extends Controller
         $deweys = Dewey::where('decimal', 'like', "$request->keyword%")
             ->orWhere('classification', 'like', "%$request->keyword%")
             ->limit(10)
+            ->select(['id', 'decimal', 'classification', 'description'])
             ->get();
         
         return response()->json([

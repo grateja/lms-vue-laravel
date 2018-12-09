@@ -16079,15 +16079,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -16104,7 +16095,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             publishing_places: [],
             deweys: [],
             dewey: '',
-            newDewey: false,
             errors: __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__["a" /* default */]
         };
     },
@@ -16161,14 +16151,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.book.publishing_place = place;
             this.publishing_places = [];
         },
-        searchDewey: function searchDewey() {
+        searchDewey: function searchDewey(keyword) {
             var _this4 = this;
 
-            if (this.dewey.length > 0) {
+            if (keyword.length > 0) {
                 this.book.dewey_id = null;
                 axios.get('/api/deweys', {
-                    params: { keyword: this.dewey }
+                    params: { keyword: keyword }
                 }).then(function (res, rej) {
+                    console.log(res.data);
                     _this4.deweys = res.data.deweys;
                 });
             } else {
@@ -16178,7 +16169,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         selectDewey: function selectDewey(dewey) {
             this.book.dewey_id = dewey.id;
             this.book.dewey = dewey;
-            this.dewey = dewey.decimal + ' - ' + dewey.classification;
             this.deweys = [];
         }
     },
@@ -16672,174 +16662,126 @@ var render = function() {
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
-              _c("label", { attrs: { for: "dewey" } }, [
-                _vm._v("Dewey : "),
-                _c("button", {
-                  staticClass: "btn btn-sm btn-default",
-                  attrs: { type: "button" },
-                  domProps: {
-                    textContent: _vm._s(
-                      _vm.newDewey ? "browse from list" : "create new"
-                    )
-                  },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      _vm.newDewey = !_vm.newDewey
+              _c("label", { attrs: { for: "dewey" } }, [_vm._v("Dewey :")]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-sm-2" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.book.dewey.decimal,
+                        expression: "book.dewey.decimal"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "text", id: "decimal", autocomplete: "off" },
+                    domProps: { value: _vm.book.dewey.decimal },
+                    on: {
+                      keyup: function($event) {
+                        _vm.searchDewey($event.target.value)
+                      },
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.book.dewey, "decimal", $event.target.value)
+                      }
                     }
-                  }
-                })
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-sm-4" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.book.dewey.classification,
+                        expression: "book.dewey.classification"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      id: "classification",
+                      autocomplete: "off"
+                    },
+                    domProps: { value: _vm.book.dewey.classification },
+                    on: {
+                      keyup: function($event) {
+                        _vm.searchDewey($event.target.value)
+                      },
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.book.dewey,
+                          "classification",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-sm-6" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.book.dewey.description,
+                        expression: "book.dewey.description"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "text", id: "description", disabled: "" },
+                    domProps: { value: _vm.book.dewey.description },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.book.dewey,
+                          "description",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  })
+                ])
               ]),
               _vm._v(" "),
-              !_vm.newDewey
-                ? _c("div", [
-                    _c("blockquote", { staticClass: "alert-info" }, [
-                      _vm._v("Start typing and select from dropdown list")
-                    ]),
-                    _vm._v(" "),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.dewey,
-                          expression: "dewey"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { type: "text", id: "dewey", autocomplete: "off" },
-                      domProps: { value: _vm.dewey },
-                      on: {
-                        keyup: _vm.searchDewey,
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.dewey = $event.target.value
-                        }
+              _c(
+                "ul",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.deweys.length > 0,
+                      expression: "deweys.length > 0"
+                    }
+                  ]
+                },
+                _vm._l(_vm.deweys, function(d, i) {
+                  return _c("li", {
+                    key: i,
+                    domProps: {
+                      textContent: _vm._s(d.decimal + " - " + d.classification)
+                    },
+                    on: {
+                      click: function($event) {
+                        _vm.selectDewey(d)
                       }
-                    }),
-                    _vm._v(" "),
-                    _c(
-                      "ul",
-                      {
-                        directives: [
-                          {
-                            name: "show",
-                            rawName: "v-show",
-                            value: _vm.deweys.length > 0,
-                            expression: "deweys.length > 0"
-                          }
-                        ]
-                      },
-                      _vm._l(_vm.deweys, function(de, i) {
-                        return _c("li", {
-                          key: i,
-                          domProps: {
-                            textContent: _vm._s(
-                              de.decimal + " - " + de.classification
-                            )
-                          },
-                          on: {
-                            click: function($event) {
-                              _vm.selectDewey(de)
-                            }
-                          }
-                        })
-                      })
-                    )
-                  ])
-                : _c("div", [
-                    _c("blockquote", { staticClass: "alert-info" }, [
-                      _vm._v("Specify new dewey decimal value")
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "row" }, [
-                      _c("div", { staticClass: "col-sm-2" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.book.dewey.decimal,
-                              expression: "book.dewey.decimal"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", id: "decimal" },
-                          domProps: { value: _vm.book.dewey.decimal },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.book.dewey,
-                                "decimal",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-4" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.book.dewey.classification,
-                              expression: "book.dewey.classification"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", id: "classification" },
-                          domProps: { value: _vm.book.dewey.classification },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.book.dewey,
-                                "classification",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-6" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.book.dewey.description,
-                              expression: "book.dewey.description"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { type: "text", id: "description" },
-                          domProps: { value: _vm.book.dewey.description },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.book.dewey,
-                                "description",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ])
-                    ])
-                  ])
+                    }
+                  })
+                })
+              )
             ]),
             _vm._v(" "),
             _vm._m(0)
