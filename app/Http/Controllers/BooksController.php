@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Book;
 use App\Publisher;
+use App\PublishingPlace;
 
 class BooksController extends Controller
 {
@@ -45,9 +46,16 @@ class BooksController extends Controller
         // if not, create a new one
         if(!$request->publisher_id && $request->publisher){
             $publisher = Publisher::create([
-                'name' => $request->publisher
+                'name' => $request->publisher['name']
             ]);
             $request['publisher_id'] = $publisher->id;
+        }
+
+        if(!$request->publishing_place_id && $request->publishing_place) {
+            $place = PublishingPlace::create([
+                'name' => $request->publishing_place['name']
+            ]);
+            $request['publishing_place_id'] = $place->id;
         }
 
         $book = Book::create(

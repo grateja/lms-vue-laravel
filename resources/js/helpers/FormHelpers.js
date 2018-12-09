@@ -3,10 +3,6 @@ class FormHelper{
         this.errors = {};
     }
 
-    validate() {
-        this.errors
-    }
-
     messages(){
         return this.errors;
     }
@@ -16,12 +12,13 @@ class FormHelper{
     }
 
     get(key){
-        if(this.errors[key])
+        if(this.errors && this.errors[key])
             return this.errors[key][0];
     }
 
     has(key){
-        return this.errors.hasOwnProperty(key);
+        if(this.errors)
+            return this.errors.hasOwnProperty(key);
     }
 
     clear(key){
@@ -30,7 +27,7 @@ class FormHelper{
             return;
         }
 
-        if(this.errors[key]){
+        if(this.errors && this.errors[key]){
             delete this.errors[key];
         }
     }

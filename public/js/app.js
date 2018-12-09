@@ -16442,6 +16442,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -16458,6 +16483,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
             publishers: [],
             publishing_places: [],
+            deweys: [],
+            dewey: '',
+            newDewey: false,
             errors: __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__["a" /* default */]
         };
     },
@@ -16515,6 +16543,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.book.publishing_place_id = place.id;
             this.book.publishing_place = place;
             this.publishing_places = [];
+        },
+        searchDewey: function searchDewey() {}
+    },
+    computed: {
+        deweyDisplay: function deweyDisplay() {
+            if (this.book.dewey) {
+                return this.book.dewey.decimal + ' - ' + this.book.dewey.classification;
+            }
+            return null;
         }
     },
     created: function created() {
@@ -16550,11 +16587,6 @@ var FormHelper = function () {
     }
 
     _createClass(FormHelper, [{
-        key: "validate",
-        value: function validate() {
-            this.errors;
-        }
-    }, {
         key: "messages",
         value: function messages() {
             return this.errors;
@@ -16567,12 +16599,12 @@ var FormHelper = function () {
     }, {
         key: "get",
         value: function get(key) {
-            if (this.errors[key]) return this.errors[key][0];
+            if (this.errors && this.errors[key]) return this.errors[key][0];
         }
     }, {
         key: "has",
         value: function has(key) {
-            return this.errors.hasOwnProperty(key);
+            if (this.errors) return this.errors.hasOwnProperty(key);
         }
     }, {
         key: "clear",
@@ -16582,7 +16614,7 @@ var FormHelper = function () {
                 return;
             }
 
-            if (this.errors[key]) {
+            if (this.errors && this.errors[key]) {
                 delete this.errors[key];
             }
         }
@@ -16623,7 +16655,7 @@ var render = function() {
             }
           },
           [
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "price" } }, [_vm._v("Price :")]),
               _vm._v(" "),
               _c("input", {
@@ -16662,7 +16694,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "type_id" } }, [_vm._v("Type ID :")]),
               _vm._v(" "),
               _c("input", {
@@ -16701,7 +16733,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "title" } }, [_vm._v("Title :")]),
               _vm._v(" "),
               _c("input", {
@@ -16740,7 +16772,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "author" } }, [_vm._v("Author :")]),
               _vm._v(" "),
               _c("input", {
@@ -16766,7 +16798,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "isbn" } }, [_vm._v("ISBN :")]),
               _vm._v(" "),
               _c("input", {
@@ -16792,7 +16824,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "year_published" } }, [
                 _vm._v("Year published :")
               ]),
@@ -16835,7 +16867,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "edition" } }, [_vm._v("Edition :")]),
               _vm._v(" "),
               _c("input", {
@@ -16861,7 +16893,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "volume" } }, [_vm._v("Volume :")]),
               _vm._v(" "),
               _c("input", {
@@ -16887,7 +16919,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "publisher" } }, [
                 _vm._v("Publisher :")
               ]),
@@ -16947,7 +16979,7 @@ var render = function() {
               )
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group row" }, [
+            _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "publishing_place" } }, [
                 _vm._v("Publishing Place :")
               ]),
@@ -17011,6 +17043,146 @@ var render = function() {
               )
             ]),
             _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "dewey" } }, [
+                _vm._v("Dewey : "),
+                _c("button", {
+                  staticClass: "btn btn-sm btn-default",
+                  domProps: {
+                    textContent: _vm._s(
+                      _vm.newDewey ? "browse from list" : "create new"
+                    )
+                  },
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      _vm.newDewey = !_vm.newDewey
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              !_vm.newDewey
+                ? _c("div", [
+                    _c("blockquote", { staticClass: "alert-info" }, [
+                      _vm._v("Start typing and select from dropdown list")
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.dewey,
+                          expression: "dewey"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text", id: "dewey" },
+                      domProps: { value: _vm.dewey },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.dewey = $event.target.value
+                        }
+                      }
+                    })
+                  ])
+                : _c("div", [
+                    _c("blockquote", { staticClass: "alert-info" }, [
+                      _vm._v("Specify new dewey decimal value")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "row" }, [
+                      _c("div", { staticClass: "col-sm-2" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.book.dewey.decimal,
+                              expression: "book.dewey.decimal"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", id: "decimal" },
+                          domProps: { value: _vm.book.dewey.decimal },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.book.dewey,
+                                "decimal",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-4" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.book.dewey.classification,
+                              expression: "book.dewey.classification"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", id: "classification" },
+                          domProps: { value: _vm.book.dewey.classification },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.book.dewey,
+                                "classification",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-6" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.book.dewey.description,
+                              expression: "book.dewey.description"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", id: "description" },
+                          domProps: { value: _vm.book.dewey.description },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.book.dewey,
+                                "description",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ])
+                    ])
+                  ])
+            ]),
+            _vm._v(" "),
             _vm._m(0)
           ]
         )
@@ -17026,7 +17198,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group row" }, [
+    return _c("div", { staticClass: "form-group" }, [
       _c("input", {
         staticClass: "btn btn-primary",
         attrs: { type: "submit", value: "Save" }
