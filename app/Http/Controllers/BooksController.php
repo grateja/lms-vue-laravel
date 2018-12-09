@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Book;
+use App\Publisher;
 
 class BooksController extends Controller
 {
@@ -42,7 +43,30 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validate the request
+        $this->validate($request, [
+            'title' => 'required',
+            'price' => 'required',
+            'type_id' => 'required',
+            'year_published' => 'min:1900|max:2200|numeric'
+        ]);
+
+        // check if publisher is already in the database
+        // if not, create a new one
+        if(!$request->publisher_id && $request->publisher){
+            $publisher = Publisher::create([
+                'name' => $request->publisher
+            ]);
+            $request['publisher_id'] = $publisher->id;
+        }
+
+        $book = Book::create(
+            $request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'publisher_id', 'publishing_place_id', 'dewey_id'])
+        );
+
+        return response()->json([
+            'book' => $book
+        ], 200);
     }
 
     /**

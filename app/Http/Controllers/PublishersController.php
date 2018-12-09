@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Publisher;
 
 class PublishersController extends Controller
 {
@@ -11,9 +12,16 @@ class PublishersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $publishers = Publisher::where('name', 'like', "$request->keyword%")
+            ->limit(10)
+            ->select(['id', 'name'])
+            ->get();
+
+        return response()->json([
+            'publishers' => $publishers
+        ], 200);
     }
 
     /**
