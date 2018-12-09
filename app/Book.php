@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Publisher;
 use App\PublishingPlace;
+use App\Category;
 
 class Book extends Model
 {
@@ -24,5 +25,9 @@ class Book extends Model
     public function dewey(){
         return $this->belongsTo(Dewey::class)
             ->select(['id', 'decimal', 'classification', 'description']);
+    }
+
+    public function categories(){
+        return $this->belongsToMany(Category::class, 'book_categories', 'book_id', 'category_id');
     }
 }
