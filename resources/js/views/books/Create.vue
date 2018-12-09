@@ -71,11 +71,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="dewey">Dewey : <button class="btn btn-sm btn-default" v-text="newDewey ? 'browse from list' : 'create new'" @click.prevent="newDewey = !newDewey"></button></label>
+                    <label for="dewey">Dewey : <button type="button" class="btn btn-sm btn-default" v-text="newDewey ? 'browse from list' : 'create new'" @click.prevent="newDewey = !newDewey"></button></label>
 
                     <div v-if="!newDewey">
                         <blockquote class="alert-info">Start typing and select from dropdown list</blockquote>
-                        <input type="text" id="dewey" class="form-control" v-model="dewey">
+                        <input type="text" id="dewey" class="form-control" v-model="dewey" autocomplete="off" @keyup="searchDewey">
+
+                        <ul v-show="deweys.length > 0">
+                            <li v-for="(de, i) in deweys" :key="i" v-text="`${de.decimal} - ${de.classification}`" @click="selectDewey(de)"></li>
+                        </ul>
                     </div>
                     <div v-else>
                         <blockquote class="alert-info">Specify new dewey decimal value</blockquote>
@@ -114,8 +118,6 @@ export default {
     data() {
         return {
             book: {
-                title: '',
-                type_id: '',
                 publisher: {},
                 publishing_place: {},
                 dewey: {}
@@ -137,7 +139,6 @@ export default {
             axios[action](url,
                 this.book,
             ).then((res, rej) => {
-                console.log(res.data);
                 this.$router.push(`/books/${res.data.book.id}`);
             }).catch(err => {
                 this.errors.errors = err.response.data.errors;
@@ -166,7 +167,6 @@ export default {
                 axios.get('/api/publishing-places', {
                     params: {keyword: this.book.publishing_place.name}
                 }).then((res, rej) => {
-                    console.log(res.data);
                     this.publishing_places = res.data.publishing_places;
                 });
             } else {
@@ -179,14 +179,22 @@ export default {
             this.publishing_places = [];
         },
         searchDewey(){
-        }
-    },
-    computed: {
-        deweyDisplay(){
-            if(this.book.dewey) {
-                return `${this.book.dewey.decimal} - ${this.book.dewey.classification}`;
+            if(this.dewey.length > 0){
+                this.book.dewey_id = null;
+                axios.get('/api/deweys', {
+                    params: {keyword: this.dewey}
+                }).then((res, rej) => {
+                    this.deweys = res.data.deweys;
+                })
+            } else {
+                this.dewey = [];
             }
-            return null;
+        },
+        selectDewey(dewey) {
+            this.book.dewey_id = dewey.id;
+            this.book.dewey = dewey;
+            this.dewey = `${dewey.decimal} - ${dewey.classification}`;
+            this.deweys = [];
         }
     },
     created(){

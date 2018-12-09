@@ -14,7 +14,7 @@
             </ul>
         </div>
 
-        <blockquote v-show="loading">Please wait...</blockquote>
+        <blockquote v-show="loading" class="flash-filter"><p>Please wait...</p></blockquote>
         <ul v-if="books.length > 0">
             <li v-for="book in books" :key="book.id">
                 <div class="book">
@@ -24,11 +24,11 @@
         </ul>
 
         <blockquote v-else-if="books.length == 0 && !loading">
-            No available books
+            <p>No available books</p>
         </blockquote>
 
         <ul class="pagination pagination-sm" v-show="page_count > 1">
-            <li v-for="page in page_count" :key="page"><a href="#" @click.prevent="navigate(page)" v-text="page"></a></li>
+            <li v-for="page in page_count" :key="page" class="page-item"><a href="#" @click.prevent="navigate(page)" v-text="page" class="page-link"></a></li>
         </ul>
 
     </div>
@@ -88,4 +88,3 @@ export default {
     }
 }
 </script>
-

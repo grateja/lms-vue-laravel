@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Dewey;
 
 class DeweysController extends Controller
 {
@@ -11,9 +12,16 @@ class DeweysController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $deweys = Dewey::where('decimal', 'like', "$request->keyword%")
+            ->orWhere('classification', 'like', "%$request->keyword%")
+            ->limit(10)
+            ->get();
+        
+        return response()->json([
+            'deweys' => $deweys
+        ], 200);
     }
 
     /**
