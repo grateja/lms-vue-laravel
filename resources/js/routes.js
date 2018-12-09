@@ -1,5 +1,7 @@
 import VueRouter from 'vue-router';
 
+import Create from './views/books/Create.vue';
+
 let routes = [
     {
         path: '/books',
@@ -11,11 +13,15 @@ let routes = [
             },
             {
                 path: 'create',
-                component: require('./views/books/Create.vue')
+                component: Create
             },
             {
                 path: ':id',
                 component: require('./views/books/Book.vue')
+            },
+            {
+                path: ':id/edit',
+                component: Create
             }
         ]
     }

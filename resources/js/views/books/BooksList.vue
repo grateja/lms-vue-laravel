@@ -14,12 +14,21 @@
             </ul>
         </div>
 
-        <ul>
+        <blockquote v-show="loading">Please wait...</blockquote>
+        <ul v-if="books.length > 0">
             <li v-for="book in books" :key="book.id">
                 <div class="book">
-                    <h5 v-text="book.title"></h5>
+                    <h5><router-link :to="`/books/${book.id}`" v-text="book.title"></router-link></h5>
                 </div>
             </li>
+        </ul>
+
+        <blockquote v-else-if="books.length == 0 && !loading">
+            No available books
+        </blockquote>
+
+        <ul class="pagination pagination-sm" v-show="page_count">
+            <li v-for="page in page_count" :key="page"><a href="#" @click.prevent="navigate(page)" v-text="page"></a></li>
         </ul>
 
     </div>
@@ -34,19 +43,27 @@ export default {
                 keyword: ''
             },
             books: [],
-            errors: []
+            page_count: 0,
+            current_page: this.$route.query.page,
+            errors: [],
+            loading: false
         }
     },
     methods: {
         filter(){
             this.errors = [];
+            this.loading = true;
             axios.get('/api/books', {
                 params: {
-                    keyword: this.query.keyword
+                    keyword: this.query.keyword,
+                    page: this.current_page
                 }
             })
             .then((res, rej) => {
-                this.books = res.data.books;
+                this.loading = false;
+                this.books = res.data.data.data;
+                this.page_count = res.data.data.last_page;
+                console.log(res.data.data)
             })
             .catch(err => {
                 if(err.response.status == 500){
@@ -54,8 +71,12 @@ export default {
                 } else {
                     this.errors.push(err.response.statusText);
                 }
-                console.log(err.response)
+                this.loading = false;
             });
+        },
+        navigate(page){
+            this.current_page = page;
+            this.filter();
         }
     },
     created(){

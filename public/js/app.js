@@ -1076,7 +1076,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(11);
-module.exports = __webpack_require__(49);
+module.exports = __webpack_require__(50);
 
 
 /***/ }),
@@ -13267,6 +13267,10 @@ module.exports = function spread(callback) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_router__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__views_books_Create_vue__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__views_books_Create_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__views_books_Create_vue__);
+
+
 
 
 var routes = [{
@@ -13277,10 +13281,13 @@ var routes = [{
         component: __webpack_require__(40)
     }, {
         path: 'create',
-        component: __webpack_require__(43)
+        component: __WEBPACK_IMPORTED_MODULE_1__views_books_Create_vue___default.a
     }, {
         path: ':id',
-        component: __webpack_require__(46)
+        component: __webpack_require__(47)
+    }, {
+        path: ':id/edit',
+        component: __WEBPACK_IMPORTED_MODULE_1__views_books_Create_vue___default.a
     }]
 }];
 
@@ -16089,6 +16096,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'books-list',
@@ -16098,7 +16114,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 keyword: ''
             },
             books: [],
-            errors: []
+            page_count: 0,
+            current_page: this.$route.query.page,
+            errors: [],
+            loading: false
         };
     },
 
@@ -16107,20 +16126,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.errors = [];
+            this.loading = true;
             axios.get('/api/books', {
                 params: {
-                    keyword: this.query.keyword
+                    keyword: this.query.keyword,
+                    page: this.current_page
                 }
             }).then(function (res, rej) {
-                _this.books = res.data.books;
+                _this.loading = false;
+                _this.books = res.data.data.data;
+                _this.page_count = res.data.data.last_page;
+                console.log(res.data.data);
             }).catch(function (err) {
                 if (err.response.status == 500) {
                     _this.errors.push('Server is unavailable at this moment');
                 } else {
                     _this.errors.push(err.response.statusText);
                 }
-                console.log(err.response);
+                _this.loading = false;
             });
+        },
+        navigate: function navigate(page) {
+            this.current_page = page;
+            this.filter();
         }
     },
     created: function created() {
@@ -16195,12 +16223,69 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _c(
+      "blockquote",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.loading,
+            expression: "loading"
+          }
+        ]
+      },
+      [_vm._v("Please wait...")]
+    ),
+    _vm._v(" "),
+    _vm.books.length > 0
+      ? _c(
+          "ul",
+          _vm._l(_vm.books, function(book) {
+            return _c("li", { key: book.id }, [
+              _c("div", { staticClass: "book" }, [
+                _c(
+                  "h5",
+                  [
+                    _c("router-link", {
+                      attrs: { to: "/books/" + book.id },
+                      domProps: { textContent: _vm._s(book.title) }
+                    })
+                  ],
+                  1
+                )
+              ])
+            ])
+          })
+        )
+      : _vm.books.length == 0 && !_vm.loading
+      ? _c("blockquote", [_vm._v("\n        No available books\n    ")])
+      : _vm._e(),
+    _vm._v(" "),
+    _c(
       "ul",
-      _vm._l(_vm.books, function(book) {
-        return _c("li", { key: book.id }, [
-          _c("div", { staticClass: "book" }, [
-            _c("h5", { domProps: { textContent: _vm._s(book.title) } })
-          ])
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.page_count,
+            expression: "page_count"
+          }
+        ],
+        staticClass: "pagination pagination-sm"
+      },
+      _vm._l(_vm.page_count, function(page) {
+        return _c("li", { key: page }, [
+          _c("a", {
+            attrs: { href: "#" },
+            domProps: { textContent: _vm._s(page) },
+            on: {
+              click: function($event) {
+                $event.preventDefault()
+                _vm.navigate(page)
+              }
+            }
+          })
         ])
       })
     )
@@ -16225,7 +16310,7 @@ var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(44)
 /* template */
-var __vue_template__ = __webpack_require__(45)
+var __vue_template__ = __webpack_require__(46)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -16269,7 +16354,7 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__ = __webpack_require__(45);
 //
 //
 //
@@ -16388,11 +16473,80 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.book.publisher = publisher.name;
             this.publishers = [];
         }
+    },
+    created: function created() {
+        var _this3 = this;
+
+        if (this.$route.params.id) {
+            var book = axios.get('/api/books/' + this.$route.params.id).then(function (res, rej) {
+                _this3.book = res.data.book;
+            });
+        }
     }
 });
 
 /***/ }),
 /* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var FormHelper = function () {
+    function FormHelper() {
+        _classCallCheck(this, FormHelper);
+
+        this.errors = {};
+    }
+
+    _createClass(FormHelper, [{
+        key: "validate",
+        value: function validate() {
+            this.errors;
+        }
+    }, {
+        key: "messages",
+        value: function messages() {
+            return this.errors;
+        }
+    }, {
+        key: "any",
+        value: function any() {
+            return Object.keys(this.errors).length > 0;
+        }
+    }, {
+        key: "get",
+        value: function get(key) {
+            if (this.errors[key]) return this.errors[key][0];
+        }
+    }, {
+        key: "has",
+        value: function has(key) {
+            return this.errors.hasOwnProperty(key);
+        }
+    }, {
+        key: "clear",
+        value: function clear(key) {
+            if (!key) {
+                this.errors = {};
+                return;
+            }
+
+            if (this.errors[key]) {
+                delete this.errors[key];
+            }
+        }
+    }]);
+
+    return FormHelper;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (new FormHelper({}));
+
+/***/ }),
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -16778,15 +16932,15 @@ if (false) {
 }
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(47)
+var __vue_script__ = __webpack_require__(48)
 /* template */
-var __vue_template__ = __webpack_require__(48)
+var __vue_template__ = __webpack_require__(49)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -16825,7 +16979,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16836,31 +16990,64 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    name: 'book'
+    name: 'book',
+    data: function data() {
+        return {
+            book_id: this.$route.params.id,
+            book: {},
+            errors: null
+        };
+    },
+    created: function created() {
+        var _this = this;
+
+        var book = axios.get("/api/books/" + this.book_id).then(function (res, rej) {
+            _this.book = res.data.book;
+        }).catch(function (err) {
+            console.log(err.response);
+            if (err.response.status == 404) {
+                _this.errors = "Book is either deleted or never exists";
+            } else if (err.response.status == 500) {
+                _this.errors = "The server is unavailable at this time.";
+            } else {
+                _this.errors = err.response.data.message;
+            }
+        });
+    }
 });
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c(
+    "div",
+    { staticClass: "book" },
+    [
+      _c("h3", [_vm._v("This is a fucking book")]),
+      _vm._v(" "),
+      _c("pre", [_vm._v(_vm._s(_vm.book) + "\n        ")]),
+      _vm._v(" "),
+      _c("router-link", { attrs: { to: "/books/" + _vm.book_id + "/edit" } }, [
+        _vm._v("edit")
+      ]),
+      _vm._v("\n        " + _vm._s(_vm.errors) + "\n    ")
+    ],
+    1
+  )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "book" }, [
-      _c("h3", [_vm._v("This is a fucking book")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -16871,77 +17058,10 @@ if (false) {
 }
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 50 */,
-/* 51 */,
-/* 52 */,
-/* 53 */,
-/* 54 */,
-/* 55 */,
-/* 56 */,
-/* 57 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var FormHelper = function () {
-    function FormHelper() {
-        _classCallCheck(this, FormHelper);
-
-        this.errors = {};
-    }
-
-    _createClass(FormHelper, [{
-        key: "validate",
-        value: function validate() {
-            this.errors;
-        }
-    }, {
-        key: "messages",
-        value: function messages() {
-            return this.errors;
-        }
-    }, {
-        key: "any",
-        value: function any() {
-            return Object.keys(this.errors).length > 0;
-        }
-    }, {
-        key: "get",
-        value: function get(key) {
-            if (this.errors[key]) return this.errors[key][0];
-        }
-    }, {
-        key: "has",
-        value: function has(key) {
-            return this.errors.hasOwnProperty(key);
-        }
-    }, {
-        key: "clear",
-        value: function clear(key) {
-            if (!key) {
-                this.errors = {};
-                return;
-            }
-
-            if (this.errors[key]) {
-                delete this.errors[key];
-            }
-        }
-    }]);
-
-    return FormHelper;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (new FormHelper({}));
 
 /***/ })
 /******/ ]);

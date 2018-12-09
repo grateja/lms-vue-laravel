@@ -88,13 +88,13 @@ export default {
     methods: {
         save(){
             axios.post('/api/books',
-                this.book
+                this.book,
             ).then((res, rej) => {
                 console.log(res.data);
                 this.$router.push(`/books/${res.data.book.id}`);
             }).catch(err => {
                 this.errors.errors = err.response.data.errors;
-            })
+            });
         },
         searchPublisher(){
             if(this.book.publisher){
@@ -112,6 +112,14 @@ export default {
             this.book.publisher_id = publisher.id;
             this.book.publisher = publisher.name;
             this.publishers = [];
+        }
+    },
+    created(){
+        if(this.$route.params.id){
+            let book = axios.get(`/api/books/${this.$route.params.id}`)
+                .then((res, rej) => {
+                    this.book = res.data.book;
+                });
         }
     }
 }

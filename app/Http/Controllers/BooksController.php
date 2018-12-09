@@ -15,13 +15,13 @@ class BooksController extends Controller
      */
     public function index(Request $request)
     {
-        $books = Book::where('title', 'like', "%$request->keyword%")
+        $data = Book::where('title', 'like', "%$request->keyword%")
             ->orWhere('author', 'like', "%$request->keyword%")
             ->orWhere('isbn', 'like', "%$request->keyword%")
             ->orWhere('type_id', 'like', "%$request->keyword%")
-            ->get();
+            ->paginate(10);
         return response()->json([
-            'books' => $books
+            'data' => $data
         ], 200);
     }
 
@@ -77,7 +77,14 @@ class BooksController extends Controller
      */
     public function show($id)
     {
-        //
+        $book = Book::find($id);
+        if($book == null) {
+            return response()->json(['Book doesn`t exist'], 404);
+        }
+
+        return response()->json([
+            'book' => $book
+        ], 200);
     }
 
     /**
