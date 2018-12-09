@@ -77,7 +77,8 @@ class BooksController extends Controller
     {
         $book = Book::with('dewey')
             ->with('publisher')
-            ->with('publishingPlace')->find($id);
+            ->with('publishingPlace')
+            ->with('categories')->find($id);
         if($book == null) {
             return response()->json(['Book doesn`t exist'], 404);
         }
