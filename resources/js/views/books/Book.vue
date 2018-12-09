@@ -5,6 +5,7 @@
 {{book}}
         </pre>
         <router-link :to="`/books/${book_id}/edit`">edit</router-link>
+        <button @click="delete_book">delete</button>
         {{errors}}
     </div>
 </template>
@@ -17,6 +18,17 @@ export default {
             book_id: this.$route.params.id,
             book: {},
             errors: null
+        }
+    },
+    methods: {
+        delete_book(){
+            if(window.confirm("Are you sure you want to delete this item?\nThis action cannot be undone!")){
+                axios.delete(`/api/books/${this.book_id}`)
+                    .then((res, rej) => {
+                        alert('deleted');
+                        this.$router.push('/books');
+                    });
+            }
         }
     },
     created(){

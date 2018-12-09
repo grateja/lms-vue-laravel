@@ -15,7 +15,7 @@
         <div id="app">
             <nav class="navbar navbar-light navbar-sticky">
                 <div class="container">
-                    <ul>
+                    <ul class="navbar">
                         <router-link tag="li" class="nav-item" to="/" exact><a class="nav-link">Home</a></router-link>
                         <router-link tag="li" class="nav-item" to="/books"><a class="nav-link">Books</a></router-link>
                         <router-link tag="li" class="nav-item" to="/issue"><a class="nav-link">Issue</a></router-link>

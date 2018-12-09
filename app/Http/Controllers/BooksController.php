@@ -26,16 +26,6 @@ class BooksController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -77,7 +67,9 @@ class BooksController extends Controller
      */
     public function show($id)
     {
-        $book = Book::find($id);
+        $book = Book::with('dewey')
+            ->with('publisher')
+            ->with('publishingPlace')->find($id);
         if($book == null) {
             return response()->json(['Book doesn`t exist'], 404);
         }
@@ -85,17 +77,6 @@ class BooksController extends Controller
         return response()->json([
             'book' => $book
         ], 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -107,7 +88,19 @@ class BooksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $book = Book::find($id);
+        
+        if($book == null){
+            return response()->json([
+                'message' => 'The book is destroyed long time ago'
+            ], 404);
+        }
+
+        $book->update($request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'publisher_id', 'publishing_place_id', 'dewey_id']));
+
+        return response()->json([
+            'book' => $book
+        ], 200);
     }
 
     /**
@@ -118,6 +111,17 @@ class BooksController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $book = Book::find($id);
+        if($book == null) {
+            return response()->json([
+                'message' => 'The book is already destroyed a long, long, long time ago.'
+            ], 404);
+        }
+
+        $book->delete();
+
+        return response()->json([
+            'message' => 'Item deleted successfully!'
+        ], 200);
     }
 }

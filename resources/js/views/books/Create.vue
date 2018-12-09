@@ -51,10 +51,21 @@
 
                 <div class="form-group row">
                     <label for="publisher">Publisher :</label>
-                    <input type="text" id="publisher" class="form-control" v-model="book.publisher" @keyup="searchPublisher" autocomplete="off">
+                    <input type="text" id="publisher" class="form-control" v-model="book.publisher.name" @keyup="searchPublisher" autocomplete="off">
                     <div class="publisher-dropdown" v-show="publishers.length > 0">
                         <ul>
                             <li v-for="(pub, i) in publishers" :key="i" v-text="pub.name" @click="selectPublisher(pub)"></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="publishing_place">Publishing Place :</label>
+                    <input type="text" id="publisher" class="form-control" v-model="book.publishing_place.name" @keyup="searchPublishingPlace" autocomplete="off">
+
+                    <div class="publishing-place-dropdown" v-show="publishing_places.length > 0">
+                        <ul>
+                            <li v-for="(pub, i) in publishing_places" :key="i" v-text="pub.name" @click="selectPublishingPlace(pub)"></li>
                         </ul>
                     </div>
                 </div>
@@ -79,15 +90,23 @@ export default {
         return {
             book: {
                 title: '',
-                type_id: ''
+                type_id: '',
+                publisher: {},
+                publishing_place: {},
+                dewey: {}
             },
-            errors: FormHelpers,
-            publishers: []
+            publishers: [],
+            publishing_places: [],
+            errors: FormHelpers
         }
     },
     methods: {
         save(){
-            axios.post('/api/books',
+            let id = this.$route.params.id
+            let action = id ? 'put' : 'post';
+            let url = id ? `/api/books/${id}` : '/api/books'
+
+            axios[action](url,
                 this.book,
             ).then((res, rej) => {
                 console.log(res.data);
@@ -98,9 +117,9 @@ export default {
         },
         searchPublisher(){
             if(this.book.publisher){
-                this.publisher_id = null;
+                this.book.publisher_id = null;
                 axios.get('/api/publishers', {
-                    params: {keyword: this.book.publisher}
+                    params: {keyword: this.book.publisher.name}
                 }).then((res, rej) => {
                     this.publishers = res.data.publishers;
                 });
@@ -110,8 +129,26 @@ export default {
         },
         selectPublisher(publisher){
             this.book.publisher_id = publisher.id;
-            this.book.publisher = publisher.name;
+            this.book.publisher = publisher;
             this.publishers = [];
+        },
+        searchPublishingPlace(){
+            if(this.book.publishing_place){
+                this.book.publishing_place_id = null;
+                axios.get('/api/publishing-places', {
+                    params: {keyword: this.book.publishing_place.name}
+                }).then((res, rej) => {
+                    console.log(res.data);
+                    this.publishing_places = res.data.publishing_places;
+                });
+            } else {
+                this.publishing_places = [];
+            }
+        },
+        selectPublishingPlace(place){
+            this.book.publishing_place_id = place.id;
+            this.book.publishing_place = place;
+            this.publishing_places = [];
         }
     },
     created(){
@@ -119,6 +156,14 @@ export default {
             let book = axios.get(`/api/books/${this.$route.params.id}`)
                 .then((res, rej) => {
                     this.book = res.data.book;
+                    if(!this.book.publisher)
+                        this.book.publisher = {};
+                    
+                    if(!this.book.publishing_place)
+                        this.book.publishing_place = {};
+                    
+                    if(!this.book.dewey)
+                        this.book.dewey = {};
                 });
         }
     }

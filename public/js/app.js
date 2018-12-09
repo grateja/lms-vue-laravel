@@ -16123,6 +16123,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         filter: function filter() {
+            this.current_page = 1;
+            this.load();
+        },
+        load: function load() {
             var _this = this;
 
             this.errors = [];
@@ -16148,11 +16152,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         navigate: function navigate(page) {
             this.current_page = page;
-            this.filter();
+            this.load();
         }
     },
     created: function created() {
-        this.filter();
+        this.load();
     }
 });
 
@@ -16268,8 +16272,8 @@ var render = function() {
           {
             name: "show",
             rawName: "v-show",
-            value: _vm.page_count,
-            expression: "page_count"
+            value: _vm.page_count > 1,
+            expression: "page_count > 1"
           }
         ],
         staticClass: "pagination pagination-sm"
@@ -16427,6 +16431,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -16436,10 +16451,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             book: {
                 title: '',
-                type_id: ''
+                type_id: '',
+                publisher: {},
+                publishing_place: {},
+                dewey: {}
             },
-            errors: __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__["a" /* default */],
-            publishers: []
+            publishers: [],
+            publishing_places: [],
+            errors: __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__["a" /* default */]
         };
     },
 
@@ -16447,7 +16466,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         save: function save() {
             var _this = this;
 
-            axios.post('/api/books', this.book).then(function (res, rej) {
+            var id = this.$route.params.id;
+            var action = id ? 'put' : 'post';
+            var url = id ? '/api/books/' + id : '/api/books';
+
+            axios[action](url, this.book).then(function (res, rej) {
                 console.log(res.data);
                 _this.$router.push('/books/' + res.data.book.id);
             }).catch(function (err) {
@@ -16458,9 +16481,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             if (this.book.publisher) {
-                this.publisher_id = null;
+                this.book.publisher_id = null;
                 axios.get('/api/publishers', {
-                    params: { keyword: this.book.publisher }
+                    params: { keyword: this.book.publisher.name }
                 }).then(function (res, rej) {
                     _this2.publishers = res.data.publishers;
                 });
@@ -16470,16 +16493,41 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         selectPublisher: function selectPublisher(publisher) {
             this.book.publisher_id = publisher.id;
-            this.book.publisher = publisher.name;
+            this.book.publisher = publisher;
             this.publishers = [];
+        },
+        searchPublishingPlace: function searchPublishingPlace() {
+            var _this3 = this;
+
+            if (this.book.publishing_place) {
+                this.book.publishing_place_id = null;
+                axios.get('/api/publishing-places', {
+                    params: { keyword: this.book.publishing_place.name }
+                }).then(function (res, rej) {
+                    console.log(res.data);
+                    _this3.publishing_places = res.data.publishing_places;
+                });
+            } else {
+                this.publishing_places = [];
+            }
+        },
+        selectPublishingPlace: function selectPublishingPlace(place) {
+            this.book.publishing_place_id = place.id;
+            this.book.publishing_place = place;
+            this.publishing_places = [];
         }
     },
     created: function created() {
-        var _this3 = this;
+        var _this4 = this;
 
         if (this.$route.params.id) {
             var book = axios.get('/api/books/' + this.$route.params.id).then(function (res, rej) {
-                _this3.book = res.data.book;
+                _this4.book = res.data.book;
+                if (!_this4.book.publisher) _this4.book.publisher = {};
+
+                if (!_this4.book.publishing_place) _this4.book.publishing_place = {};
+
+                if (!_this4.book.dewey) _this4.book.dewey = {};
             });
         }
     }
@@ -16849,20 +16897,20 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.book.publisher,
-                    expression: "book.publisher"
+                    value: _vm.book.publisher.name,
+                    expression: "book.publisher.name"
                   }
                 ],
                 staticClass: "form-control",
                 attrs: { type: "text", id: "publisher", autocomplete: "off" },
-                domProps: { value: _vm.book.publisher },
+                domProps: { value: _vm.book.publisher.name },
                 on: {
                   keyup: _vm.searchPublisher,
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(_vm.book, "publisher", $event.target.value)
+                    _vm.$set(_vm.book.publisher, "name", $event.target.value)
                   }
                 }
               }),
@@ -16890,6 +16938,70 @@ var render = function() {
                         on: {
                           click: function($event) {
                             _vm.selectPublisher(pub)
+                          }
+                        }
+                      })
+                    })
+                  )
+                ]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group row" }, [
+              _c("label", { attrs: { for: "publishing_place" } }, [
+                _vm._v("Publishing Place :")
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.book.publishing_place.name,
+                    expression: "book.publishing_place.name"
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: { type: "text", id: "publisher", autocomplete: "off" },
+                domProps: { value: _vm.book.publishing_place.name },
+                on: {
+                  keyup: _vm.searchPublishingPlace,
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(
+                      _vm.book.publishing_place,
+                      "name",
+                      $event.target.value
+                    )
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.publishing_places.length > 0,
+                      expression: "publishing_places.length > 0"
+                    }
+                  ],
+                  staticClass: "publishing-place-dropdown"
+                },
+                [
+                  _c(
+                    "ul",
+                    _vm._l(_vm.publishing_places, function(pub, i) {
+                      return _c("li", {
+                        key: i,
+                        domProps: { textContent: _vm._s(pub.name) },
+                        on: {
+                          click: function($event) {
+                            _vm.selectPublishingPlace(pub)
                           }
                         }
                       })
@@ -16995,6 +17107,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'book',
@@ -17005,19 +17118,32 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             errors: null
         };
     },
-    created: function created() {
-        var _this = this;
 
-        var book = axios.get("/api/books/" + this.book_id).then(function (res, rej) {
-            _this.book = res.data.book;
+    methods: {
+        delete_book: function delete_book() {
+            var _this = this;
+
+            if (window.confirm("Are you sure you want to delete this item?\nThis action cannot be undone!")) {
+                axios.delete('/api/books/' + this.book_id).then(function (res, rej) {
+                    alert('deleted');
+                    _this.$router.push('/books');
+                });
+            }
+        }
+    },
+    created: function created() {
+        var _this2 = this;
+
+        var book = axios.get('/api/books/' + this.book_id).then(function (res, rej) {
+            _this2.book = res.data.book;
         }).catch(function (err) {
             console.log(err.response);
             if (err.response.status == 404) {
-                _this.errors = "Book is either deleted or never exists";
+                _this2.errors = "Book is either deleted or never exists";
             } else if (err.response.status == 500) {
-                _this.errors = "The server is unavailable at this time.";
+                _this2.errors = "The server is unavailable at this time.";
             } else {
-                _this.errors = err.response.data.message;
+                _this2.errors = err.response.data.message;
             }
         });
     }
@@ -17042,6 +17168,8 @@ var render = function() {
       _c("router-link", { attrs: { to: "/books/" + _vm.book_id + "/edit" } }, [
         _vm._v("edit")
       ]),
+      _vm._v(" "),
+      _c("button", { on: { click: _vm.delete_book } }, [_vm._v("delete")]),
       _vm._v("\n        " + _vm._s(_vm.errors) + "\n    ")
     ],
     1

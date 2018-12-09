@@ -27,7 +27,7 @@
             No available books
         </blockquote>
 
-        <ul class="pagination pagination-sm" v-show="page_count">
+        <ul class="pagination pagination-sm" v-show="page_count > 1">
             <li v-for="page in page_count" :key="page"><a href="#" @click.prevent="navigate(page)" v-text="page"></a></li>
         </ul>
 
@@ -51,6 +51,10 @@ export default {
     },
     methods: {
         filter(){
+            this.current_page = 1;
+            this.load();
+        },
+        load(){
             this.errors = [];
             this.loading = true;
             axios.get('/api/books', {
@@ -76,11 +80,11 @@ export default {
         },
         navigate(page){
             this.current_page = page;
-            this.filter();
+            this.load();
         }
     },
     created(){
-        this.filter();
+        this.load();
     }
 }
 </script>
