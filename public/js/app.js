@@ -16363,6 +16363,8 @@ module.exports = function listToStyles (parentId, list) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Autocomplete_vue__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Autocomplete_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_Autocomplete_vue__);
 //
 //
 //
@@ -16485,11 +16487,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'create-book',
+    components: {
+        autocomplete: __WEBPACK_IMPORTED_MODULE_1__components_Autocomplete_vue___default.a
+    },
     data: function data() {
         return {
             book: {
@@ -16510,6 +16518,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
+        select: function select(item) {
+            console.log(item);
+        },
         save: function save() {
             var _this = this;
 
@@ -16722,6 +16733,17 @@ var render = function() {
             }
           },
           [
+            _c("autocomplete", {
+              attrs: {
+                url: "/api/publishers",
+                data_source: "publishers",
+                data_field: "id",
+                data_display: "name",
+                class_name: "form-control"
+              },
+              on: { select: _vm.select }
+            }),
+            _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
               _c("label", { attrs: { for: "price" } }, [_vm._v("Price :")]),
               _vm._v(" "),
@@ -17378,7 +17400,8 @@ var render = function() {
             ),
             _vm._v(" "),
             _vm._m(0)
-          ]
+          ],
+          1
         )
       ]),
       _vm._v(" "),
@@ -17627,7 +17650,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.loading = false;
                 _this.books = res.data.data.data;
                 _this.page_count = res.data.data.last_page;
-                console.log(res.data.data);
             }).catch(function (err) {
                 if (err.response.status == 500) {
                     _this.errors.push('Server is unavailable at this moment');
@@ -17941,6 +17963,230 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(62)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(60)
+/* template */
+var __vue_template__ = __webpack_require__(64)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-c191a05a"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/Autocomplete.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-c191a05a", Component.options)
+  } else {
+    hotAPI.reload("data-v-c191a05a", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 60 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'autocomplete',
+    data: function data() {
+        return {
+            keyword: '',
+            items: []
+        };
+    },
+
+    props: ['url', 'data_source', 'data_field', 'data_display', 'class_name'],
+    methods: {
+        search: function search() {
+            var _this = this;
+
+            if (this.keyword.length > 0) {
+                axios.get(this.url, {
+                    params: { keyword: this.keyword }
+                }).then(function (res, rej) {
+                    _this.items = res.data[_this.data_source];
+                });
+            } else {
+                this.items = [];
+            }
+        },
+        select: function select(item) {
+            this.items = [];
+            this.$refs.keyword.focus();
+            this.keyword = item[this.data_display];
+            this.$emit('select', item);
+        },
+        blur: function blur() {
+            var _this2 = this;
+
+            setTimeout(function () {
+                _this2.items = [];
+            }, 500);
+        }
+    }
+});
+
+/***/ }),
+/* 61 */,
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(63);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(41)("efd09b72", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c191a05a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Autocomplete.vue", function() {
+     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c191a05a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Autocomplete.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(40)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.autocomplete[data-v-c191a05a]{\n    position: relative;\n}\n.autocomplete ul[data-v-c191a05a]{\n    background: white;\n    -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n    border-radius: 5px;\n    list-style: none;\n    position: absolute;\n    margin: 0px;\n    padding: 0px;\n}\nli[data-v-c191a05a]{\n    border: 1px solid rgb(243, 243, 243);\n    cursor: default;\n    list-style: none;\n    margin: 0px;\n    padding: 5px 20px;\n}\nli[data-v-c191a05a]:last-child{\n    border-radius: 0px 0px 5px 5px;\n}\nli[data-v-c191a05a]:first-child{\n    border-radius: 5px 5px 0px 0px;\n}\nli[data-v-c191a05a]:hover{\n    color: rgb(0, 153, 255);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "autocomplete" }, [
+    _c("input", {
+      directives: [
+        {
+          name: "model",
+          rawName: "v-model",
+          value: _vm.keyword,
+          expression: "keyword"
+        }
+      ],
+      ref: "keyword",
+      class: _vm.class_name,
+      attrs: { type: "text" },
+      domProps: { value: _vm.keyword },
+      on: {
+        keyup: _vm.search,
+        blur: _vm.blur,
+        input: function($event) {
+          if ($event.target.composing) {
+            return
+          }
+          _vm.keyword = $event.target.value
+        }
+      }
+    }),
+    _vm._v(" "),
+    _c(
+      "ul",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.items.length > 0,
+            expression: "items.length > 0"
+          }
+        ]
+      },
+      _vm._l(_vm.items, function(item) {
+        return _c(
+          "li",
+          {
+            key: item[_vm.data_field],
+            on: {
+              click: function($event) {
+                _vm.select(item)
+              }
+            }
+          },
+          [_vm._v(_vm._s(item[_vm.data_display]))]
+        )
+      })
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-c191a05a", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

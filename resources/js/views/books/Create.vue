@@ -5,6 +5,8 @@
         <div class="create-book-container">
             <form method="POST" @submit.prevent="save" @keypress="errors.clear($event.target.id)">
 
+                <autocomplete url="/api/publishers" data_source="publishers" @select="select" data_field="id" data_display="name" class_name="form-control"></autocomplete>
+
                 <div class="form-group">
                     <label for="price">Price :</label>
                     <input type="number" id="price" class="form-control" v-model="book.price">
@@ -122,9 +124,13 @@
 
 <script>
 import FormHelpers from '../../helpers/FormHelpers.js';
+import autocomplete from '../../components/Autocomplete.vue';
 
 export default {
     name: 'create-book',
+    components: {
+        autocomplete
+    },
     data() {
         return {
             book: {
@@ -144,6 +150,9 @@ export default {
         }
     },
     methods: {
+        select(item){
+            console.log(item);
+        },
         save(){
             let id = this.$route.params.id
             let action = id ? 'put' : 'post';

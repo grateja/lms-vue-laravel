@@ -67,7 +67,6 @@ export default {
                 this.loading = false;
                 this.books = res.data.data.data;
                 this.page_count = res.data.data.last_page;
-                console.log(res.data.data)
             })
             .catch(err => {
                 if(err.response.status == 500){
