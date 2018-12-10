@@ -5,8 +5,6 @@
         <div class="create-book-container">
             <form method="POST" @submit.prevent="save" @keypress="errors.clear($event.target.id)">
 
-                <autocomplete url="/api/publishers" data_source="publishers" @select="select" data_field="id" data_display="name" class_name="form-control"></autocomplete>
-
                 <div class="form-group">
                     <label for="price">Price :</label>
                     <input type="number" id="price" class="form-control" v-model="book.price">
@@ -53,13 +51,8 @@
 
                 <div class="form-group">
                     <label for="publisher">Publisher :</label>
-                    <input type="text" id="publisher" class="form-control" v-model="book.publisher.name" @keyup="searchPublisher" autocomplete="off">
-                    <div class="publisher-dropdown">
-                        <ul v-show="publishers.length > 0">
-                            <li v-for="(pub, i) in publishers" :key="i" v-text="pub.name" @click="selectPublisher(pub)"></li>
-                        </ul>
-                        <router-link to="/publishers">Manage publishers</router-link>
-                    </div>
+
+                    <autocomplete v-model="book.publisher.name" url="/api/publishers" data_source="publishers" data_display="name" data_field="id" class_name="form-control input-sm" :value="book.publisher.name" @select="selectPublisher" @browse="browsePublisher"></autocomplete>
                 </div>
 
                 <div class="form-group">
@@ -150,8 +143,14 @@ export default {
         }
     },
     methods: {
-        select(item){
-            console.log(item);
+        selectPublisher(item){
+            this.book.publisher = item;
+            this.book.publisher_id = item.id;
+            console.log(this.book.publisher)
+        },
+        browsePublisher(val){
+            this.book.publisher_id = null;
+            this.book.publisher.name = val;
         },
         save(){
             let id = this.$route.params.id
@@ -168,23 +167,6 @@ export default {
             }).catch(err => {
                 this.errors.errors = err.response.data.errors;
             });
-        },
-        searchPublisher(){
-            if(this.book.publisher.name){
-                this.book.publisher_id = null;
-                axios.get('/api/publishers', {
-                    params: {keyword: this.book.publisher.name}
-                }).then((res, rej) => {
-                    this.publishers = res.data.publishers;
-                });
-            } else {
-                this.publishers = [];
-            }
-        },
-        selectPublisher(publisher){
-            this.book.publisher_id = publisher.id;
-            this.book.publisher = publisher;
-            this.publishers = [];
         },
         searchPublishingPlace(){
             if(this.book.publishing_place.name){

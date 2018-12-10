@@ -1,6 +1,6 @@
 <template>
     <div class="autocomplete">
-        <input type="text" @keyup="search" v-model="keyword" ref="keyword" :class="class_name" @blur="blur">
+        <input type="text" @keyup="search" v-model="keyword" ref="keyword" :class="class_name" @blur="blur" :placeholder="value" @focus="focus">
         <ul v-show="items.length > 0">
             <li v-for="item in items" :key="item[data_field]" @click="select(item)">{{item[data_display]}}</li>
         </ul>
@@ -9,22 +9,32 @@
 
 <script>
 export default {
+    props:{
+        url: {},
+        data_source: {},
+        data_field: {},
+        data_display: {},
+        class_name: {},
+        value: {}
+    },
     name: 'autocomplete',
     data(){
         return {
             keyword: '',
-            items: []
+            items: [],
+            focused: false
         }
     },
-    props: ['url', 'data_source', 'data_field', 'data_display', 'class_name'],
+    // props: ['url', 'data_source', 'data_field', 'data_display', 'class_name', 'value'],
     methods: {
         search(){
+            this.$emit('browse', this.keyword);
             if(this.keyword.length > 0){
                 axios.get(this.url, {
                     params: {keyword: this.keyword}
                 }).then((res, rej) => {
                     this.items = res.data[this.data_source];
-                })
+                });
             } else {
                 this.items = [];
             }
@@ -39,6 +49,14 @@ export default {
             setTimeout(() => {
                 this.items = [];
             }, 500);
+        },
+        focus(){
+            if(!this.focused) {
+                this.focused = true;
+
+                this.keyword = this.value;
+                this.$refs.keyword.placeholder = "";
+            }
         }
     }
 }
@@ -56,6 +74,7 @@ export default {
         position: absolute;
         margin: 0px;
         padding: 0px;
+        z-index: 9999;
     }
     li{
         border: 1px solid rgb(243, 243, 243);

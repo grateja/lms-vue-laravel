@@ -115,7 +115,7 @@ class BooksController extends Controller
             $request['publisher_id'] = $publisher->id;
         }
 
-        if($request->publishing_place_id == null && $request->publisher != null) {
+        if($request->publishing_place_id == null && $request->publishing_place != null) {
             $place = 
                 PublishingPlace::where('name', '=', $request->publishing_place['name'])->first() ??
                 PublishingPlace::create(['name' => $request->publishing_place['name']]);
