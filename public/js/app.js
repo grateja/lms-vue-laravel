@@ -16008,7 +16008,7 @@ exports = module.exports = __webpack_require__(40)(false);
 
 
 // module
-exports.push([module.i, "\n.category[data-v-7e5af7c0]{\n    display: inline-block;\n}\n", ""]);
+exports.push([module.i, "\n.category[data-v-7e5af7c0]{\n    display: inline-block;\n}\nli.active[data-v-7e5af7c0]{\n    color: red;\n}\n", ""]);
 
 // exports
 
@@ -16528,7 +16528,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         searchPublisher: function searchPublisher() {
             var _this2 = this;
 
-            if (this.book.publisher) {
+            if (this.book.publisher.name) {
                 this.book.publisher_id = null;
                 axios.get('/api/publishers', {
                     params: { keyword: this.book.publisher.name }
@@ -16547,7 +16547,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         searchPublishingPlace: function searchPublishingPlace() {
             var _this3 = this;
 
-            if (this.book.publishing_place) {
+            if (this.book.publishing_place.name) {
                 this.book.publishing_place_id = null;
                 axios.get('/api/publishing-places', {
                     params: { keyword: this.book.publishing_place.name }
@@ -16571,7 +16571,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 axios.get('/api/deweys', {
                     params: { keyword: keyword }
                 }).then(function (res, rej) {
-                    console.log(res.data);
                     _this4.deweys = res.data.deweys;
                 });
             } else {
@@ -16590,14 +16589,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 axios.get('/api/categories', {
                     params: { keyword: this.category }
                 }).then(function (res, rej) {
-                    _this5.categories = res.data.categories;
+                    console.log(_this5.selectedCategories);
+                    _this5.categories = res.data.categories.map(function (cat) {
+                        cat.isSelected = _this5.selectedCategories.filter(function (c) {
+                            return c.id == cat.id;
+                        }).length > 0;
+                        return cat;
+                    });
                 });
             } else {
                 this.categories = [];
             }
         },
         selectCategory: function selectCategory(cat) {
-            if (cat) {
+            if (cat && !cat.isSelected) {
                 this.selectedCategories.push(cat);
                 this.category = '';
                 this.categories = [];
@@ -16625,6 +16630,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 if (!_this6.book.publishing_place) _this6.book.publishing_place = {};
 
                 if (!_this6.book.dewey) _this6.book.dewey = {};
+
+                _this6.selectedCategories = _this6.book.categories;
             });
         }
     }
@@ -17102,9 +17109,9 @@ var render = function() {
                         }
                       ]
                     },
-                    _vm._l(_vm.publishing_places, function(pub, i) {
+                    _vm._l(_vm.publishing_places, function(pub) {
                       return _c("li", {
-                        key: i,
+                        key: pub.id,
                         domProps: { textContent: _vm._s(pub.name) },
                         on: {
                           click: function($event) {
@@ -17241,9 +17248,9 @@ var render = function() {
                       }
                     ]
                   },
-                  _vm._l(_vm.deweys, function(d, i) {
+                  _vm._l(_vm.deweys, function(d) {
                     return _c("li", {
-                      key: i,
+                      key: d.id,
                       domProps: {
                         textContent: _vm._s(
                           d.decimal + " - " + d.classification
@@ -17322,8 +17329,9 @@ var render = function() {
                       expression: "category"
                     }
                   ],
+                  ref: "category",
                   staticClass: "form-control",
-                  attrs: { type: "text", id: "category" },
+                  attrs: { type: "text", id: "category", autocomplete: "off" },
                   domProps: { value: _vm.category },
                   on: {
                     keyup: _vm.searchCategories,
@@ -17351,6 +17359,7 @@ var render = function() {
                   _vm._l(_vm.categories, function(cat) {
                     return _c("li", {
                       key: cat.id,
+                      class: cat.isSelected ? "active" : "",
                       domProps: { textContent: _vm._s(cat.name) },
                       on: {
                         click: function($event) {

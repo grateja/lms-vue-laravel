@@ -66,7 +66,7 @@
 
                     <div class="publishing-place-dropdown" v-show="publishing_places.length > 0">
                         <ul v-show="publishing_places.length > 0">
-                            <li v-for="(pub, i) in publishing_places" :key="i" v-text="pub.name" @click="selectPublishingPlace(pub)"></li>
+                            <li v-for="pub in publishing_places" :key="pub.id" v-text="pub.name" @click="selectPublishingPlace(pub)"></li>
                         </ul>
                         <router-link to="/publishing-places">Manage publishing places</router-link>
                     </div>
@@ -88,7 +88,7 @@
                         </div>
                     </div>
                     <ul v-show="deweys.length > 0">
-                        <li v-for="(d, i) in deweys" :key="i" v-text="`${d.decimal} - ${d.classification}`" @click="selectDewey(d)"></li>
+                        <li v-for="d in deweys" :key="d.id" v-text="`${d.decimal} - ${d.classification}`" @click="selectDewey(d)"></li>
                     </ul>
                     <router-link to="/deweys">Manage dewey decimals</router-link>
                 </div>
@@ -102,9 +102,9 @@
                             </li>
                         </ul>
                     </div>
-                    <input type="text" id="category" class="form-control" v-model="category" @keyup="searchCategories">
+                    <input type="text" id="category" class="form-control" v-model="category" @keyup="searchCategories" ref="category" autocomplete="off">
                     <ul v-show="categories.length > 0">
-                        <li v-for="cat in categories" :key="cat.id" v-text="cat.name" @click="selectCategory(cat)"></li>
+                        <li v-for="cat in categories" :key="cat.id" v-text="cat.name" @click="selectCategory(cat)" :class="cat.isSelected ? 'active' : ''"></li>
                     </ul>
                     <router-link to="/categories">Manage categories</router-link>
                 </div>
@@ -161,7 +161,7 @@ export default {
             });
         },
         searchPublisher(){
-            if(this.book.publisher){
+            if(this.book.publisher.name){
                 this.book.publisher_id = null;
                 axios.get('/api/publishers', {
                     params: {keyword: this.book.publisher.name}
@@ -178,7 +178,7 @@ export default {
             this.publishers = [];
         },
         searchPublishingPlace(){
-            if(this.book.publishing_place){
+            if(this.book.publishing_place.name){
                 this.book.publishing_place_id = null;
                 axios.get('/api/publishing-places', {
                     params: {keyword: this.book.publishing_place.name}
@@ -200,7 +200,6 @@ export default {
                 axios.get('/api/deweys', {
                     params: {keyword: keyword}
                 }).then((res, rej) => {
-                    console.log(res.data);
                     this.deweys = res.data.deweys;
                 })
             } else {
@@ -217,14 +216,18 @@ export default {
                 axios.get('/api/categories', {
                     params: {keyword: this.category}
                 }).then((res, rej) => {
-                    this.categories = res.data.categories;
+                    console.log(this.selectedCategories);
+                    this.categories = res.data.categories.map(cat => {
+                        cat.isSelected = this.selectedCategories.filter(c => c.id == cat.id).length > 0;
+                        return cat;
+                    });
                 })
             } else {
                 this.categories = [];
             }
         },
         selectCategory(cat){
-            if(cat){
+            if(cat && !cat.isSelected){
                 this.selectedCategories.push(cat);
                 this.category = '';
                 this.categories = [];
@@ -252,6 +255,8 @@ export default {
                     
                     if(!this.book.dewey)
                         this.book.dewey = {};
+
+                    this.selectedCategories = this.book.categories;
                 });
         }
     }
@@ -261,5 +266,8 @@ export default {
 <style scoped>
     .category{
         display: inline-block;
+    }
+    li.active{
+        color: red;
     }
 </style>
