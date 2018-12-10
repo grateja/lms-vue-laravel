@@ -52,10 +52,11 @@
                 <div class="form-group">
                     <label for="publisher">Publisher :</label>
                     <input type="text" id="publisher" class="form-control" v-model="book.publisher.name" @keyup="searchPublisher" autocomplete="off">
-                    <div class="publisher-dropdown" v-show="publishers.length > 0">
-                        <ul>
+                    <div class="publisher-dropdown">
+                        <ul v-show="publishers.length > 0">
                             <li v-for="(pub, i) in publishers" :key="i" v-text="pub.name" @click="selectPublisher(pub)"></li>
                         </ul>
+                        <router-link to="/publishers">Manage publishers</router-link>
                     </div>
                 </div>
 
@@ -64,9 +65,10 @@
                     <input type="text" id="publisher" class="form-control" v-model="book.publishing_place.name" @keyup="searchPublishingPlace" autocomplete="off">
 
                     <div class="publishing-place-dropdown" v-show="publishing_places.length > 0">
-                        <ul>
+                        <ul v-show="publishing_places.length > 0">
                             <li v-for="(pub, i) in publishing_places" :key="i" v-text="pub.name" @click="selectPublishingPlace(pub)"></li>
                         </ul>
+                        <router-link to="/publishing-places">Manage publishing places</router-link>
                     </div>
                 </div>
 
@@ -88,6 +90,23 @@
                     <ul v-show="deweys.length > 0">
                         <li v-for="(d, i) in deweys" :key="i" v-text="`${d.decimal} - ${d.classification}`" @click="selectDewey(d)"></li>
                     </ul>
+                    <router-link to="/deweys">Manage dewey decimals</router-link>
+                </div>
+
+                <div class="form-group">
+                    <label for="categories">Categories :</label>
+                    <div class="categories">
+                        <ul v-show="selectedCategories.length > 0">
+                            <li class="category" v-for="cat in selectedCategories" :key="cat.id">{{cat.name}}
+                                <button type="button" class="btn btn-default btn-xs" @click="removeCategory(cat)">remove</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <input type="text" id="category" class="form-control" v-model="category" @keyup="searchCategories">
+                    <ul v-show="categories.length > 0">
+                        <li v-for="cat in categories" :key="cat.id" v-text="cat.name" @click="selectCategory(cat)"></li>
+                    </ul>
+                    <router-link to="/categories">Manage categories</router-link>
                 </div>
 
                 <div class="form-group">
@@ -111,12 +130,16 @@ export default {
             book: {
                 publisher: {},
                 publishing_place: {},
-                dewey: {}
+                dewey: {},
+                selected_category_ids: []
             },
+            selectedCategories: [],
             publishers: [],
             publishing_places: [],
             deweys: [],
             dewey: '',
+            categories: [],
+            category: '',
             errors: FormHelpers
         }
     },
@@ -125,6 +148,9 @@ export default {
             let id = this.$route.params.id
             let action = id ? 'put' : 'post';
             let url = id ? `/api/books/${id}` : '/api/books'
+
+            this.book.selected_category_ids = this.selectedCategoriesIDs();
+
 
             axios[action](url,
                 this.book,
@@ -185,6 +211,32 @@ export default {
             this.book.dewey_id = dewey.id;
             this.book.dewey = dewey;
             this.deweys = [];
+        },
+        searchCategories(){
+            if(this.category.length > 0){
+                axios.get('/api/categories', {
+                    params: {keyword: this.category}
+                }).then((res, rej) => {
+                    this.categories = res.data.categories;
+                })
+            } else {
+                this.categories = [];
+            }
+        },
+        selectCategory(cat){
+            if(cat){
+                this.selectedCategories.push(cat);
+                this.category = '';
+                this.categories = [];
+            }
+        },
+        removeCategory(cat){
+            this.selectedCategories = this.selectedCategories.filter(c => {
+                return c != cat;
+            });
+        },
+        selectedCategoriesIDs(){
+            return this.selectedCategories.map(c => {return c.id});
         }
     },
     created(){
@@ -205,3 +257,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .category{
+        display: inline-block;
+    }
+</style>

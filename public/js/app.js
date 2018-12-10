@@ -1076,7 +1076,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(11);
-module.exports = __webpack_require__(50);
+module.exports = __webpack_require__(55);
 
 
 /***/ }),
@@ -13275,16 +13275,16 @@ module.exports = function spread(callback) {
 
 var routes = [{
     path: '/books',
-    component: __webpack_require__(41),
+    component: __webpack_require__(46),
     children: [{
         path: '/',
-        component: __webpack_require__(44)
+        component: __webpack_require__(49)
     }, {
         path: 'create',
         component: __WEBPACK_IMPORTED_MODULE_1__views_books_Create_vue___default.a
     }, {
         path: ':id',
-        component: __webpack_require__(47)
+        component: __webpack_require__(52)
     }, {
         path: ':id/edit',
         component: __WEBPACK_IMPORTED_MODULE_1__views_books_Create_vue___default.a
@@ -15927,17 +15927,21 @@ if (inBrowser && window.Vue) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(38)
+}
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(38)
+var __vue_script__ = __webpack_require__(43)
 /* template */
-var __vue_template__ = __webpack_require__(40)
+var __vue_template__ = __webpack_require__(45)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
-var __vue_scopeId__ = null
+var __vue_scopeId__ = "data-v-7e5af7c0"
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
@@ -15971,11 +15975,413 @@ module.exports = Component.exports
 
 /***/ }),
 /* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(39);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(41)("658b4c1a", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7e5af7c0\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Create.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7e5af7c0\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Create.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(40)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.category[data-v-7e5af7c0]{\n    display: inline-block;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+  Modified by Evan You @yyx990803
+*/
+
+var hasDocument = typeof document !== 'undefined'
+
+if (typeof DEBUG !== 'undefined' && DEBUG) {
+  if (!hasDocument) {
+    throw new Error(
+    'vue-style-loader cannot be used in a non-browser environment. ' +
+    "Use { target: 'node' } in your Webpack config to indicate a server-rendering environment."
+  ) }
+}
+
+var listToStyles = __webpack_require__(42)
+
+/*
+type StyleObject = {
+  id: number;
+  parts: Array<StyleObjectPart>
+}
+
+type StyleObjectPart = {
+  css: string;
+  media: string;
+  sourceMap: ?string
+}
+*/
+
+var stylesInDom = {/*
+  [id: number]: {
+    id: number,
+    refs: number,
+    parts: Array<(obj?: StyleObjectPart) => void>
+  }
+*/}
+
+var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
+var singletonElement = null
+var singletonCounter = 0
+var isProduction = false
+var noop = function () {}
+var options = null
+var ssrIdKey = 'data-vue-ssr-id'
+
+// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+// tags it will allow on a page
+var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\b/.test(navigator.userAgent.toLowerCase())
+
+module.exports = function (parentId, list, _isProduction, _options) {
+  isProduction = _isProduction
+
+  options = _options || {}
+
+  var styles = listToStyles(parentId, list)
+  addStylesToDom(styles)
+
+  return function update (newList) {
+    var mayRemove = []
+    for (var i = 0; i < styles.length; i++) {
+      var item = styles[i]
+      var domStyle = stylesInDom[item.id]
+      domStyle.refs--
+      mayRemove.push(domStyle)
+    }
+    if (newList) {
+      styles = listToStyles(parentId, newList)
+      addStylesToDom(styles)
+    } else {
+      styles = []
+    }
+    for (var i = 0; i < mayRemove.length; i++) {
+      var domStyle = mayRemove[i]
+      if (domStyle.refs === 0) {
+        for (var j = 0; j < domStyle.parts.length; j++) {
+          domStyle.parts[j]()
+        }
+        delete stylesInDom[domStyle.id]
+      }
+    }
+  }
+}
+
+function addStylesToDom (styles /* Array<StyleObject> */) {
+  for (var i = 0; i < styles.length; i++) {
+    var item = styles[i]
+    var domStyle = stylesInDom[item.id]
+    if (domStyle) {
+      domStyle.refs++
+      for (var j = 0; j < domStyle.parts.length; j++) {
+        domStyle.parts[j](item.parts[j])
+      }
+      for (; j < item.parts.length; j++) {
+        domStyle.parts.push(addStyle(item.parts[j]))
+      }
+      if (domStyle.parts.length > item.parts.length) {
+        domStyle.parts.length = item.parts.length
+      }
+    } else {
+      var parts = []
+      for (var j = 0; j < item.parts.length; j++) {
+        parts.push(addStyle(item.parts[j]))
+      }
+      stylesInDom[item.id] = { id: item.id, refs: 1, parts: parts }
+    }
+  }
+}
+
+function createStyleElement () {
+  var styleElement = document.createElement('style')
+  styleElement.type = 'text/css'
+  head.appendChild(styleElement)
+  return styleElement
+}
+
+function addStyle (obj /* StyleObjectPart */) {
+  var update, remove
+  var styleElement = document.querySelector('style[' + ssrIdKey + '~="' + obj.id + '"]')
+
+  if (styleElement) {
+    if (isProduction) {
+      // has SSR styles and in production mode.
+      // simply do nothing.
+      return noop
+    } else {
+      // has SSR styles but in dev mode.
+      // for some reason Chrome can't handle source map in server-rendered
+      // style tags - source maps in <style> only works if the style tag is
+      // created and inserted dynamically. So we remove the server rendered
+      // styles and inject new ones.
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  if (isOldIE) {
+    // use singleton mode for IE9.
+    var styleIndex = singletonCounter++
+    styleElement = singletonElement || (singletonElement = createStyleElement())
+    update = applyToSingletonTag.bind(null, styleElement, styleIndex, false)
+    remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true)
+  } else {
+    // use multi-style-tag mode in all other cases
+    styleElement = createStyleElement()
+    update = applyToTag.bind(null, styleElement)
+    remove = function () {
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  update(obj)
+
+  return function updateStyle (newObj /* StyleObjectPart */) {
+    if (newObj) {
+      if (newObj.css === obj.css &&
+          newObj.media === obj.media &&
+          newObj.sourceMap === obj.sourceMap) {
+        return
+      }
+      update(obj = newObj)
+    } else {
+      remove()
+    }
+  }
+}
+
+var replaceText = (function () {
+  var textStore = []
+
+  return function (index, replacement) {
+    textStore[index] = replacement
+    return textStore.filter(Boolean).join('\n')
+  }
+})()
+
+function applyToSingletonTag (styleElement, index, remove, obj) {
+  var css = remove ? '' : obj.css
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = replaceText(index, css)
+  } else {
+    var cssNode = document.createTextNode(css)
+    var childNodes = styleElement.childNodes
+    if (childNodes[index]) styleElement.removeChild(childNodes[index])
+    if (childNodes.length) {
+      styleElement.insertBefore(cssNode, childNodes[index])
+    } else {
+      styleElement.appendChild(cssNode)
+    }
+  }
+}
+
+function applyToTag (styleElement, obj) {
+  var css = obj.css
+  var media = obj.media
+  var sourceMap = obj.sourceMap
+
+  if (media) {
+    styleElement.setAttribute('media', media)
+  }
+  if (options.ssrId) {
+    styleElement.setAttribute(ssrIdKey, obj.id)
+  }
+
+  if (sourceMap) {
+    // https://developer.chrome.com/devtools/docs/javascript-debugging
+    // this makes source maps inside style tags work properly in Chrome
+    css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
+    // http://stackoverflow.com/a/26603875
+    css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
+  }
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = css
+  } else {
+    while (styleElement.firstChild) {
+      styleElement.removeChild(styleElement.firstChild)
+    }
+    styleElement.appendChild(document.createTextNode(css))
+  }
+}
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+/**
+ * Translates the list format produced by css-loader into something
+ * easier to manipulate.
+ */
+module.exports = function listToStyles (parentId, list) {
+  var styles = []
+  var newStyles = {}
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i]
+    var id = item[0]
+    var css = item[1]
+    var media = item[2]
+    var sourceMap = item[3]
+    var part = {
+      id: parentId + ':' + i,
+      css: css,
+      media: media,
+      sourceMap: sourceMap
+    }
+    if (!newStyles[id]) {
+      styles.push(newStyles[id] = { id: id, parts: [part] })
+    } else {
+      newStyles[id].parts.push(part)
+    }
+  }
+  return styles
+}
+
+
+/***/ }),
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__ = __webpack_require__(44);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -16089,12 +16495,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             book: {
                 publisher: {},
                 publishing_place: {},
-                dewey: {}
+                dewey: {},
+                selected_category_ids: []
             },
+            selectedCategories: [],
             publishers: [],
             publishing_places: [],
             deweys: [],
             dewey: '',
+            categories: [],
+            category: '',
             errors: __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__["a" /* default */]
         };
     },
@@ -16106,6 +16516,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var id = this.$route.params.id;
             var action = id ? 'put' : 'post';
             var url = id ? '/api/books/' + id : '/api/books';
+
+            this.book.selected_category_ids = this.selectedCategoriesIDs();
 
             axios[action](url, this.book).then(function (res, rej) {
                 _this.$router.push('/books/' + res.data.book.id);
@@ -16170,26 +16582,56 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.book.dewey_id = dewey.id;
             this.book.dewey = dewey;
             this.deweys = [];
+        },
+        searchCategories: function searchCategories() {
+            var _this5 = this;
+
+            if (this.category.length > 0) {
+                axios.get('/api/categories', {
+                    params: { keyword: this.category }
+                }).then(function (res, rej) {
+                    _this5.categories = res.data.categories;
+                });
+            } else {
+                this.categories = [];
+            }
+        },
+        selectCategory: function selectCategory(cat) {
+            if (cat) {
+                this.selectedCategories.push(cat);
+                this.category = '';
+                this.categories = [];
+            }
+        },
+        removeCategory: function removeCategory(cat) {
+            this.selectedCategories = this.selectedCategories.filter(function (c) {
+                return c != cat;
+            });
+        },
+        selectedCategoriesIDs: function selectedCategoriesIDs() {
+            return this.selectedCategories.map(function (c) {
+                return c.id;
+            });
         }
     },
     created: function created() {
-        var _this5 = this;
+        var _this6 = this;
 
         if (this.$route.params.id) {
             var book = axios.get('/api/books/' + this.$route.params.id).then(function (res, rej) {
-                _this5.book = res.data.book;
-                if (!_this5.book.publisher) _this5.book.publisher = {};
+                _this6.book = res.data.book;
+                if (!_this6.book.publisher) _this6.book.publisher = {};
 
-                if (!_this5.book.publishing_place) _this5.book.publishing_place = {};
+                if (!_this6.book.publishing_place) _this6.book.publishing_place = {};
 
-                if (!_this5.book.dewey) _this5.book.dewey = {};
+                if (!_this6.book.dewey) _this6.book.dewey = {};
             });
         }
     }
 });
 
 /***/ }),
-/* 39 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16244,7 +16686,7 @@ var FormHelper = function () {
 /* harmony default export */ __webpack_exports__["a"] = (new FormHelper({}));
 
 /***/ }),
-/* 40 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -16567,20 +17009,20 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "div",
-                {
-                  directives: [
-                    {
-                      name: "show",
-                      rawName: "v-show",
-                      value: _vm.publishers.length > 0,
-                      expression: "publishers.length > 0"
-                    }
-                  ],
-                  staticClass: "publisher-dropdown"
-                },
+                { staticClass: "publisher-dropdown" },
                 [
                   _c(
                     "ul",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.publishers.length > 0,
+                          expression: "publishers.length > 0"
+                        }
+                      ]
+                    },
                     _vm._l(_vm.publishers, function(pub, i) {
                       return _c("li", {
                         key: i,
@@ -16592,8 +17034,13 @@ var render = function() {
                         }
                       })
                     })
-                  )
-                ]
+                  ),
+                  _vm._v(" "),
+                  _c("router-link", { attrs: { to: "/publishers" } }, [
+                    _vm._v("Manage publishers")
+                  ])
+                ],
+                1
               )
             ]),
             _vm._v(" "),
@@ -16645,6 +17092,16 @@ var render = function() {
                 [
                   _c(
                     "ul",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.publishing_places.length > 0,
+                          expression: "publishing_places.length > 0"
+                        }
+                      ]
+                    },
                     _vm._l(_vm.publishing_places, function(pub, i) {
                       return _c("li", {
                         key: i,
@@ -16656,133 +17113,260 @@ var render = function() {
                         }
                       })
                     })
-                  )
-                ]
+                  ),
+                  _vm._v(" "),
+                  _c("router-link", { attrs: { to: "/publishing-places" } }, [
+                    _vm._v("Manage publishing places")
+                  ])
+                ],
+                1
               )
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group" }, [
-              _c("label", { attrs: { for: "dewey" } }, [_vm._v("Dewey :")]),
-              _vm._v(" "),
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "col-sm-2" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.book.dewey.decimal,
-                        expression: "book.dewey.decimal"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text", id: "decimal", autocomplete: "off" },
-                    domProps: { value: _vm.book.dewey.decimal },
-                    on: {
-                      keyup: function($event) {
-                        _vm.searchDewey($event.target.value)
-                      },
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _c("label", { attrs: { for: "dewey" } }, [_vm._v("Dewey :")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-sm-2" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.book.dewey.decimal,
+                          expression: "book.dewey.decimal"
                         }
-                        _vm.$set(_vm.book.dewey, "decimal", $event.target.value)
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        type: "text",
+                        id: "decimal",
+                        autocomplete: "off"
+                      },
+                      domProps: { value: _vm.book.dewey.decimal },
+                      on: {
+                        keyup: function($event) {
+                          _vm.searchDewey($event.target.value)
+                        },
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.book.dewey,
+                            "decimal",
+                            $event.target.value
+                          )
+                        }
                       }
-                    }
-                  })
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-4" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.book.dewey.classification,
+                          expression: "book.dewey.classification"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        type: "text",
+                        id: "classification",
+                        autocomplete: "off"
+                      },
+                      domProps: { value: _vm.book.dewey.classification },
+                      on: {
+                        keyup: function($event) {
+                          _vm.searchDewey($event.target.value)
+                        },
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.book.dewey,
+                            "classification",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-6" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.book.dewey.description,
+                          expression: "book.dewey.description"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text", id: "description", disabled: "" },
+                      domProps: { value: _vm.book.dewey.description },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.book.dewey,
+                            "description",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ])
                 ]),
                 _vm._v(" "),
-                _c("div", { staticClass: "col-sm-4" }, [
-                  _c("input", {
+                _c(
+                  "ul",
+                  {
                     directives: [
                       {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.book.dewey.classification,
-                        expression: "book.dewey.classification"
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.deweys.length > 0,
+                        expression: "deweys.length > 0"
                       }
-                    ],
-                    staticClass: "form-control",
-                    attrs: {
-                      type: "text",
-                      id: "classification",
-                      autocomplete: "off"
-                    },
-                    domProps: { value: _vm.book.dewey.classification },
-                    on: {
-                      keyup: function($event) {
-                        _vm.searchDewey($event.target.value)
+                    ]
+                  },
+                  _vm._l(_vm.deweys, function(d, i) {
+                    return _c("li", {
+                      key: i,
+                      domProps: {
+                        textContent: _vm._s(
+                          d.decimal + " - " + d.classification
+                        )
                       },
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                      on: {
+                        click: function($event) {
+                          _vm.selectDewey(d)
                         }
-                        _vm.$set(
-                          _vm.book.dewey,
-                          "classification",
-                          $event.target.value
-                        )
                       }
-                    }
+                    })
                   })
-                ]),
+                ),
                 _vm._v(" "),
-                _c("div", { staticClass: "col-sm-6" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.book.dewey.description,
-                        expression: "book.dewey.description"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text", id: "description", disabled: "" },
-                    domProps: { value: _vm.book.dewey.description },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(
-                          _vm.book.dewey,
-                          "description",
-                          $event.target.value
-                        )
-                      }
-                    }
-                  })
+                _c("router-link", { attrs: { to: "/deweys" } }, [
+                  _vm._v("Manage dewey decimals")
                 ])
-              ]),
-              _vm._v(" "),
-              _c(
-                "ul",
-                {
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _c("label", { attrs: { for: "categories" } }, [
+                  _vm._v("Categories :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "categories" }, [
+                  _c(
+                    "ul",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.selectedCategories.length > 0,
+                          expression: "selectedCategories.length > 0"
+                        }
+                      ]
+                    },
+                    _vm._l(_vm.selectedCategories, function(cat) {
+                      return _c(
+                        "li",
+                        { key: cat.id, staticClass: "category" },
+                        [
+                          _vm._v(
+                            _vm._s(cat.name) + "\n                            "
+                          ),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-default btn-xs",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  _vm.removeCategory(cat)
+                                }
+                              }
+                            },
+                            [_vm._v("remove")]
+                          )
+                        ]
+                      )
+                    })
+                  )
+                ]),
+                _vm._v(" "),
+                _c("input", {
                   directives: [
                     {
-                      name: "show",
-                      rawName: "v-show",
-                      value: _vm.deweys.length > 0,
-                      expression: "deweys.length > 0"
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.category,
+                      expression: "category"
                     }
-                  ]
-                },
-                _vm._l(_vm.deweys, function(d, i) {
-                  return _c("li", {
-                    key: i,
-                    domProps: {
-                      textContent: _vm._s(d.decimal + " - " + d.classification)
-                    },
-                    on: {
-                      click: function($event) {
-                        _vm.selectDewey(d)
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text", id: "category" },
+                  domProps: { value: _vm.category },
+                  on: {
+                    keyup: _vm.searchCategories,
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
                       }
+                      _vm.category = $event.target.value
                     }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "ul",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.categories.length > 0,
+                        expression: "categories.length > 0"
+                      }
+                    ]
+                  },
+                  _vm._l(_vm.categories, function(cat) {
+                    return _c("li", {
+                      key: cat.id,
+                      domProps: { textContent: _vm._s(cat.name) },
+                      on: {
+                        click: function($event) {
+                          _vm.selectCategory(cat)
+                        }
+                      }
+                    })
                   })
-                })
-              )
-            ]),
+                ),
+                _vm._v(" "),
+                _c("router-link", { attrs: { to: "/categories" } }, [
+                  _vm._v("Manage categories")
+                ])
+              ],
+              1
+            ),
             _vm._v(" "),
             _vm._m(0)
           ]
@@ -16817,15 +17401,15 @@ if (false) {
 }
 
 /***/ }),
-/* 41 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(42)
+var __vue_script__ = __webpack_require__(47)
 /* template */
-var __vue_template__ = __webpack_require__(43)
+var __vue_template__ = __webpack_require__(48)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -16864,7 +17448,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 42 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16884,7 +17468,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 43 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -16911,15 +17495,15 @@ if (false) {
 }
 
 /***/ }),
-/* 44 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(45)
+var __vue_script__ = __webpack_require__(50)
 /* template */
-var __vue_template__ = __webpack_require__(46)
+var __vue_template__ = __webpack_require__(51)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -16958,7 +17542,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 45 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17055,7 +17639,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 46 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -17202,15 +17786,15 @@ if (false) {
 }
 
 /***/ }),
-/* 47 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(48)
+var __vue_script__ = __webpack_require__(53)
 /* template */
-var __vue_template__ = __webpack_require__(49)
+var __vue_template__ = __webpack_require__(54)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -17249,7 +17833,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 48 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17308,7 +17892,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 49 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -17344,7 +17928,7 @@ if (false) {
 }
 
 /***/ }),
-/* 50 */
+/* 55 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
