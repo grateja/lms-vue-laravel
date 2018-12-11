@@ -46,8 +46,8 @@ class BooksController extends Controller
             $request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'publisher_id', 'publishing_place_id', 'dewey_id'])
         );
 
-        $book->attachPublisher($request->publisher);
-        $book->attachPublishingPlace($request->publishing_place);
+        $book->attachPublisher($request->publisher_name);
+        $book->attachPublishingPlace($request->publishing_place_name);
 
         $book->categories()->attach($request->selected_category_ids);
 
@@ -96,8 +96,8 @@ class BooksController extends Controller
 
         $book->update($request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'dewey_id']));
 
-        $book->attachPublisher($request->publisher);
-        $book->attachPublishingPlace($request->publishing_place);
+        $book->attachPublisher($request->publisher_name);
+        $book->attachPublishingPlace($request->publishing_place_name);
 
         return response()->json([
             'book' => $book

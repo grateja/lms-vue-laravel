@@ -16531,15 +16531,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -16570,16 +16561,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         selectPublisher: function selectPublisher(item) {
-            this.book.publisher = item.name;
+            this.book.publisher.name = item.name;
         },
         browsePublisher: function browsePublisher(val) {
-            this.book.publisher = val;
+            this.book.publisher.name = val;
         },
         browsePublishingPlace: function browsePublishingPlace(val) {
-            this.book.publishing_place = val;
+            this.book.publishing_place.name = val;
         },
         selectPublishingPlace: function selectPublishingPlace(item) {
-            this.book.publishing_place = item.name;
+            this.book.publishing_place.name = item.name;
         },
         save: function save() {
             var _this = this;
@@ -16590,30 +16581,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.book.selected_category_ids = this.selectedCategoriesIDs();
 
+            this.book.publisher_name = this.book.publisher.name;
+            this.book.publishing_place_name = this.book.publishing_place.name;
+
             axios[action](url, this.book).then(function (res, rej) {
                 _this.$router.push('/books/' + res.data.book.id);
             }).catch(function (err) {
                 _this.errors.errors = err.response.data.errors;
             });
         },
-
-        // searchPublishingPlace(){
-        //     if(this.book.publishing_place.name){
-        //         this.book.publishing_place_id = null;
-        //         axios.get('/api/publishing-places', {
-        //             params: {keyword: this.book.publishing_place.name}
-        //         }).then((res, rej) => {
-        //             this.publishing_places = res.data.publishing_places;
-        //         });
-        //     } else {
-        //         this.publishing_places = [];
-        //     }
-        // },
-        // selectPublishingPlace(place){
-        //     this.book.publishing_place_id = place.id;
-        //     this.book.publishing_place = place;
-        //     this.publishing_places = [];
-        // },
         searchDewey: function searchDewey(keyword) {
             var _this2 = this;
 
@@ -16640,7 +16616,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 axios.get('/api/categories', {
                     params: { keyword: this.category }
                 }).then(function (res, rej) {
-                    console.log(_this3.selectedCategories);
                     _this3.categories = res.data.categories.map(function (cat) {
                         cat.isSelected = _this3.selectedCategories.filter(function (c) {
                             return c.id == cat.id;
@@ -16874,7 +16849,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.$emit('browse', this.keyword);
-            if (this.keyword.length > 0) {
+            if (this.keyword) {
                 axios.get(this.url, {
                     params: { keyword: this.keyword }
                 }).then(function (res, rej) {

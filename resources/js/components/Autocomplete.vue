@@ -29,7 +29,7 @@ export default {
     methods: {
         search(){
             this.$emit('browse', this.keyword);
-            if(this.keyword.length > 0){
+            if(this.keyword){
                 axios.get(this.url, {
                     params: {keyword: this.keyword}
                 }).then((res, rej) => {

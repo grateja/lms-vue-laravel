@@ -60,15 +60,6 @@
                     <label for="publishing_place">Publishing Place :</label>
 
                     <autocomplete url="/api/publishing-places" @browse="browsePublishingPlace" @select="selectPublishingPlace" data_source="publishing_places" data_field="id" data_display="name" class_name="form-control input-sm" :value="book.publishing_place.name"></autocomplete>
-
-                    <!-- <input type="text" id="publisher" class="form-control" v-model="book.publishing_place.name" @keyup="searchPublishingPlace" autocomplete="off">
-
-                    <div class="publishing-place-dropdown" v-show="publishing_places.length > 0">
-                        <ul v-show="publishing_places.length > 0">
-                            <li v-for="pub in publishing_places" :key="pub.id" v-text="pub.name" @click="selectPublishingPlace(pub)"></li>
-                        </ul>
-                        <router-link to="/publishing-places">Manage publishing places</router-link>
-                    </div> -->
                 </div>
 
                 <div class="form-group">
@@ -148,16 +139,16 @@ export default {
     },
     methods: {
         selectPublisher(item){
-            this.book.publisher = item.name;
+            this.book.publisher.name = item.name;
         },
         browsePublisher(val){
-            this.book.publisher = val;
+            this.book.publisher.name = val;
         },
         browsePublishingPlace(val) {
-            this.book.publishing_place = val;
+            this.book.publishing_place.name = val;
         },
         selectPublishingPlace(item) {
-            this.book.publishing_place = item.name;
+            this.book.publishing_place.name = item.name;
         },
         save(){
             let id = this.$route.params.id
@@ -166,6 +157,8 @@ export default {
 
             this.book.selected_category_ids = this.selectedCategoriesIDs();
 
+            this.book.publisher_name = this.book.publisher.name;
+            this.book.publishing_place_name = this.book.publishing_place.name;
 
             axios[action](url,
                 this.book,
@@ -175,23 +168,6 @@ export default {
                 this.errors.errors = err.response.data.errors;
             });
         },
-        // searchPublishingPlace(){
-        //     if(this.book.publishing_place.name){
-        //         this.book.publishing_place_id = null;
-        //         axios.get('/api/publishing-places', {
-        //             params: {keyword: this.book.publishing_place.name}
-        //         }).then((res, rej) => {
-        //             this.publishing_places = res.data.publishing_places;
-        //         });
-        //     } else {
-        //         this.publishing_places = [];
-        //     }
-        // },
-        // selectPublishingPlace(place){
-        //     this.book.publishing_place_id = place.id;
-        //     this.book.publishing_place = place;
-        //     this.publishing_places = [];
-        // },
         searchDewey(keyword){
             if(keyword.length > 0){
                 this.book.dewey_id = null;
@@ -214,7 +190,6 @@ export default {
                 axios.get('/api/categories', {
                     params: {keyword: this.category}
                 }).then((res, rej) => {
-                    console.log(this.selectedCategories);
                     this.categories = res.data.categories.map(cat => {
                         cat.isSelected = this.selectedCategories.filter(c => c.id == cat.id).length > 0;
                         return cat;
