@@ -31,4 +31,36 @@ class Book extends Model
         return $this->belongsToMany(Category::class, 'book_categories', 'book_id', 'category_id')
             ->select(['categories.id','categories.name', 'categories.description']);
     }
+
+    public function attachPublisher($publisher_name) {
+        if($publisher_name) {
+            $publisher =
+                Publisher::where('name', '=', $publisher_name)->first() ??
+                Publisher::create(['name' => $publisher_name]);
+            
+            $this->update(['publisher_id' => $publisher->id]);
+
+            return $publisher;
+        }
+
+        $this->update(['publisher_id' => null]);
+
+        return null;
+    }
+
+    public function attachPublishingPlace($publishing_place_name) {
+        if($publishing_place_name) {
+            $publishing_place =
+                PublishingPlace::where('name', '=', $publishing_place_name)->first() ??
+                PublishingPlace::create(['name' => $publishing_place_name]);
+
+            $this->update(['publishing_place_id' => $publishing_place->id]);
+
+            return $publishing_place;
+        }
+
+        $this->update(['publishing_place_id' => null]);
+
+        return null;
+    }
 }
