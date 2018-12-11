@@ -16555,16 +16555,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             dewey: '',
             categories: [],
             category: '',
-            errors: __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__["a" /* default */]
+            errors: __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__["a" /* default */],
+            keme: 'sometext',
+            list: []
         };
     },
 
     methods: {
         selectPublisher: function selectPublisher(item) {
-            this.book.publisher.name = item.name;
+            // this.book.publisher.name = item.name;
         },
         browsePublisher: function browsePublisher(val) {
-            this.book.publisher.name = val;
+            // this.book.publisher.name = val;
         },
         browsePublishingPlace: function browsePublishingPlace(val) {
             this.book.publishing_place.name = val;
@@ -16826,37 +16828,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: {
-        url: {},
-        data_source: {},
-        data_field: {},
-        data_display: {},
-        class_name: {},
-        value: {}
-    },
+    props: ['url', 'data_source', 'data_field', 'data_display', 'class_name', 'value', 'initial_value'],
+
     name: 'autocomplete',
     data: function data() {
         return {
-            keyword: '',
-            items: [],
-            focused: false
+            focused: false,
+            items: []
+            // content: this.value
         };
     },
 
     // props: ['url', 'data_source', 'data_field', 'data_display', 'class_name', 'value'],
     methods: {
-        search: function search() {
+        search: function search(val) {
             var _this = this;
 
-            this.$emit('browse', this.keyword);
-            if (this.keyword) {
+            console.log(val);
+            // this.$emit('input', this.keyword);
+            if (val) {
                 axios.get(this.url, {
-                    params: { keyword: this.keyword }
+                    params: { keyword: val }
                 }).then(function (res, rej) {
+
                     _this.items = res.data[_this.data_source];
                 });
             } else {
-                this.items = [];
+                // this.items = [];
             }
         },
         select: function select(item) {
@@ -16872,13 +16870,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this2.items = [];
             }, 500);
         },
-        focus: function focus() {
-            if (!this.focused) {
-                this.focused = true;
+        update: function update(val) {
+            var _this3 = this;
 
-                this.keyword = this.value;
-                this.$refs.keyword.placeholder = "";
+            console.log(this.$refs.input.value);
+            if (val == 'keme') this.some = 'wala';
+            if (val) {
+                axios.get(this.url, {
+                    params: { keyword: val }
+                }).then(function (res, rej) {
+                    // this.getItems = res.data[this.data_source];
+                    _this3.$emit('show', res.data[_this3.data_source]);
+                    _this3.items = res.data[_this3.data_source];
+                    // console.log(res.data[this.data_source]);
+                });
+            } else {
+                // this.items = [];
             }
+            console.log(this.value);
+            this.$emit('input', this.value);
+        }
+    },
+    computed: {
+        getItems: function getItems() {
+            return {
+                get: function get() {
+                    return this.items;
+                },
+                set: function set(value) {
+                    console.log('value', value);
+                    this.items = value;
+                }
+            };
         }
     }
 });
@@ -16893,31 +16916,15 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "autocomplete" }, [
     _c("input", {
-      directives: [
-        {
-          name: "model",
-          rawName: "v-model",
-          value: _vm.keyword,
-          expression: "keyword"
-        }
-      ],
-      ref: "keyword",
-      class: _vm.class_name,
-      attrs: { type: "text", placeholder: _vm.value },
-      domProps: { value: _vm.keyword },
+      ref: "input",
+      attrs: { type: "text" },
       on: {
-        keyup: _vm.search,
-        blur: _vm.blur,
-        focus: _vm.focus,
         input: function($event) {
-          if ($event.target.composing) {
-            return
-          }
-          _vm.keyword = $event.target.value
+          _vm.update($event.target.value)
         }
       }
     }),
-    _vm._v(" "),
+    _vm._v(" " + _vm._s(_vm.initial_value) + "\n    "),
     _c(
       "ul",
       {
@@ -17266,18 +17273,14 @@ var render = function() {
                     data_display: "name",
                     data_field: "id",
                     class_name: "form-control input-sm",
-                    value: _vm.book.publisher.name
-                  },
-                  on: {
-                    select: _vm.selectPublisher,
-                    browse: _vm.browsePublisher
+                    initial_value: _vm.keme
                   },
                   model: {
-                    value: _vm.book.publisher.name,
+                    value: _vm.keme,
                     callback: function($$v) {
-                      _vm.$set(_vm.book.publisher, "name", $$v)
+                      _vm.keme = $$v
                     },
-                    expression: "book.publisher.name"
+                    expression: "keme"
                   }
                 }),
                 _vm._v(" "),
@@ -17302,8 +17305,7 @@ var render = function() {
                     data_source: "publishing_places",
                     data_field: "id",
                     data_display: "name",
-                    class_name: "form-control input-sm",
-                    value: _vm.book.publishing_place.name
+                    class_name: "form-control input-sm"
                   },
                   on: {
                     browse: _vm.browsePublishingPlace,

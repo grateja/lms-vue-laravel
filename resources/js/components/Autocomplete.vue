@@ -1,6 +1,6 @@
 <template>
     <div class="autocomplete">
-        <input type="text" @keyup="search" v-model="keyword" ref="keyword" :class="class_name" @blur="blur" :placeholder="value" @focus="focus">
+        <input type="text" @input="update($event.target.value)" ref="input" > {{initial_value}}
         <ul v-show="items.length > 0">
             <li v-for="item in items" :key="item[data_field]" @click="select(item)">{{item[data_display]}}</li>
         </ul>
@@ -9,34 +9,37 @@
 
 <script>
 export default {
-    props:{
-        url: {},
-        data_source: {},
-        data_field: {},
-        data_display: {},
-        class_name: {},
-        value: {}
-    },
+    props:
+        ['url',
+        'data_source',
+        'data_field',
+        'data_display',
+        'class_name',
+        'value',
+        'initial_value']
+    ,
     name: 'autocomplete',
     data(){
         return {
-            keyword: '',
-            items: [],
-            focused: false
+            focused: false,
+            items:[]
+            // content: this.value
         }
     },
     // props: ['url', 'data_source', 'data_field', 'data_display', 'class_name', 'value'],
     methods: {
-        search(){
-            this.$emit('browse', this.keyword);
-            if(this.keyword){
+        search(val){
+            console.log(val)
+            // this.$emit('input', this.keyword);
+            if(val){
                 axios.get(this.url, {
-                    params: {keyword: this.keyword}
+                    params: {keyword: val}
                 }).then((res, rej) => {
+
                     this.items = res.data[this.data_source];
                 });
             } else {
-                this.items = [];
+                // this.items = [];
             }
         },
         select(item){
@@ -50,12 +53,36 @@ export default {
                 this.items = [];
             }, 500);
         },
-        focus(){
-            if(!this.focused) {
-                this.focused = true;
-
-                this.keyword = this.value;
-                this.$refs.keyword.placeholder = "";
+        update(val){
+            console.log(this.$refs.input.value)
+            if(val == 'keme')
+                this.some = 'wala';
+            if(val){
+                axios.get(this.url, {
+                    params: {keyword: val}
+                }).then((res, rej) => {
+                    // this.getItems = res.data[this.data_source];
+                    this.$emit('show', res.data[this.data_source]);
+                    this.items = res.data[this.data_source];
+                    // console.log(res.data[this.data_source]);
+                });
+            } else {
+                // this.items = [];
+            }
+            console.log(this.value)
+            this.$emit('input', this.value);
+        }
+    },
+    computed: {
+        getItems(){
+            return {
+                get(){
+                    return this.items;
+                },
+                set(value){
+                    console.log('value', value);
+                    this.items = value;
+                }
             }
         }
     }

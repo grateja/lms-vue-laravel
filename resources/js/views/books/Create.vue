@@ -52,14 +52,14 @@
                 <div class="form-group">
                     <label for="publisher">Publisher :</label>
 
-                    <autocomplete v-model="book.publisher.name" url="/api/autocomplete/publishers" data_source="publishers" data_display="name" data_field="id" class_name="form-control input-sm" :value="book.publisher.name" @select="selectPublisher" @browse="browsePublisher"></autocomplete>
+                    <autocomplete v-model="keme" url="/api/autocomplete/publishers" data_source="publishers" data_display="name" data_field="id" class_name="form-control input-sm" :initial_value="keme"></autocomplete>
                     <router-link to="/publishers">Manage publishers</router-link>
                 </div>
 
                 <div class="form-group">
                     <label for="publishing_place">Publishing Place :</label>
 
-                    <autocomplete url="/api/publishing-places" @browse="browsePublishingPlace" @select="selectPublishingPlace" data_source="publishing_places" data_field="id" data_display="name" class_name="form-control input-sm" :value="book.publishing_place.name"></autocomplete>
+                    <autocomplete url="/api/publishing-places" @browse="browsePublishingPlace" @select="selectPublishingPlace" data_source="publishing_places" data_field="id" data_display="name" class_name="form-control input-sm"></autocomplete>
                 </div>
 
                 <div class="form-group">
@@ -134,15 +134,17 @@ export default {
             dewey: '',
             categories: [],
             category: '',
-            errors: FormHelpers
+            errors: FormHelpers,
+            keme: 'sometext',
+            list: []
         }
     },
     methods: {
         selectPublisher(item){
-            this.book.publisher.name = item.name;
+            // this.book.publisher.name = item.name;
         },
         browsePublisher(val){
-            this.book.publisher.name = val;
+            // this.book.publisher.name = val;
         },
         browsePublishingPlace(val) {
             this.book.publishing_place.name = val;
