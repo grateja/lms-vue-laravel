@@ -1,5 +1,5 @@
 <template>
-    <ul class="pagination pagination-sm">
+    <ul class="pagination pagination-sm" v-show="total_pages > 1">
         <li v-for="page in total_pages" :key="page" :class="{active: $route.query.page == page}" class="page-item">
             <a href="#" @click.prevent="navigate(page)" class="page-link">{{page}}</a>
         </li>

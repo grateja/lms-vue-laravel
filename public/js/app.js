@@ -17878,7 +17878,17 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "ul",
-    { staticClass: "pagination pagination-sm" },
+    {
+      directives: [
+        {
+          name: "show",
+          rawName: "v-show",
+          value: _vm.total_pages > 1,
+          expression: "total_pages > 1"
+        }
+      ],
+      staticClass: "pagination pagination-sm"
+    },
     _vm._l(_vm.total_pages, function(page) {
       return _c(
         "li",
