@@ -7,13 +7,7 @@ use App\Publisher;
 
 class PublishersController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
+    public function autocomplete(Request $request){
         $publishers = Publisher::where('name', 'like', "$request->keyword%")
             ->limit(10)
             ->select(['id', 'name'])
@@ -25,13 +19,19 @@ class PublishersController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        $data = Publisher::where('name', 'like', "$request->keyword%")
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+
+        return response()->json([
+            'data' => $data
+        ], 200);
     }
 
     /**
@@ -42,7 +42,15 @@ class PublishersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required'
+        ]);
+
+        $publisher = Publisher::create($request->only(['name', 'description']));
+
+        return response()->json([
+            'publisher' => $publisher
+        ], 200);
     }
 
     /**

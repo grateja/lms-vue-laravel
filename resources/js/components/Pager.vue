@@ -1,0 +1,29 @@
+<template>
+    <ul class="pagination pagination-sm">
+        <li v-for="page in total_pages" :key="page" :class="{active: $route.query.page == page}" class="page-item">
+            <a href="#" @click.prevent="navigate(page)" class="page-link">{{page}}</a>
+        </li>
+    </ul>
+</template>
+
+<script>
+export default {
+    name: 'pager',
+    props: {
+        total_pages: {
+            required: true,
+            dataType: 'integer'
+        },
+        uri: {
+            required: true
+        }
+    },
+    methods: {
+        navigate(page){
+            this.$router.push(`${this.uri}?page=${page}`);
+            this.$emit('navigate', page);
+        }
+    }
+}
+</script>
+

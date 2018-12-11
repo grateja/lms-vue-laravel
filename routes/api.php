@@ -22,3 +22,7 @@ Route::resource('deweys', 'DeweysController');
 Route::resource('publishers', 'PublishersController');
 Route::resource('publishing-places', 'PublishingPlacesController');
 Route::resource('categories', 'CategoriesController');
+
+Route::group(['prefix' => 'autocomplete'], function(){
+    Route::get('/publishers', 'PublishersController@autocomplete');
+});

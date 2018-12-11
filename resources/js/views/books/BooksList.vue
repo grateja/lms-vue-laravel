@@ -27,16 +27,18 @@
             <p>No available books</p>
         </blockquote>
 
-        <ul class="pagination pagination-sm" v-show="page_count > 1">
-            <li v-for="page in page_count" :key="page" class="page-item"><a href="#" @click.prevent="navigate(page)" v-text="page" class="page-link"></a></li>
-        </ul>
-
+        <pager uri="/books" :total_pages="page_count" @navigate="navigate"></pager>
     </div>
 </template>
 
 <script>
+import pager from '../../components/Pager.vue';
+
 export default {
     name: 'books-list',
+    components: {
+        pager
+    },
     data(){
         return {
             query: {

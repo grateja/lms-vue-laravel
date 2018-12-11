@@ -108,14 +108,14 @@ class BooksController extends Controller
         }
 
         // check if publisher changed
-        if($request->publisher_id == null && $request->publisher != null) {
+        if($request->publisher_id == null && $request->publisher != null && strlen($request->publisher['name']) > 0) {
             $publisher = 
                 Publisher::where('name', '=', $request->publisher['name'])->first() ??
                 Publisher::create(['name' => $request->publisher['name']]);
             $request['publisher_id'] = $publisher->id;
         }
 
-        if($request->publishing_place_id == null && $request->publishing_place != null) {
+        if($request->publishing_place_id == null && $request->publishing_place != null && strlen($request->publishing_place['name'] > 0)) {
             $place = 
                 PublishingPlace::where('name', '=', $request->publishing_place['name'])->first() ??
                 PublishingPlace::create(['name' => $request->publishing_place['name']]);

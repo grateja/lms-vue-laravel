@@ -24,6 +24,16 @@ let routes = [
                 component: Create
             }
         ]
+    },
+    {
+        path: '/publishers',
+        component: require('./views/publishers/Index.vue'),
+        children: [
+            {
+                path: '/',
+                component: require('./views/publishers/PublisherList.vue')
+            }
+        ]
     }
 ];
 

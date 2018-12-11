@@ -7,6 +7,16 @@ use App\PublishingPlace;
 
 class PublishingPlacesController extends Controller
 {
+    public function autocomplete(Request $request){
+        $places = PublishingPlace::where('name', 'like', "$request->keyword%")
+            ->limit(10)
+            ->select(['id', 'name'])
+            ->get();
+        return response()->json([
+            'publishing_places' => $places
+        ], 200);
+    }
+
     /**
      * Display a listing of the resource.
      *
