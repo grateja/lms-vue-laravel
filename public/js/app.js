@@ -16537,6 +16537,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -16567,13 +16570,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         selectPublisher: function selectPublisher(item) {
-            this.book.publisher = item;
-            this.book.publisher_id = item.id;
-            console.log(this.book.publisher);
+            this.book.publisher = item.name;
         },
         browsePublisher: function browsePublisher(val) {
-            this.book.publisher_id = null;
-            this.book.publisher.name = val;
+            this.book.publisher = val;
+        },
+        browsePublishingPlace: function browsePublishingPlace(val) {
+            this.book.publishing_place = val;
+        },
+        selectPublishingPlace: function selectPublishingPlace(item) {
+            this.book.publishing_place = item.name;
         },
         save: function save() {
             var _this = this;
@@ -16590,34 +16596,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.errors.errors = err.response.data.errors;
             });
         },
-        searchPublishingPlace: function searchPublishingPlace() {
-            var _this2 = this;
 
-            if (this.book.publishing_place.name) {
-                this.book.publishing_place_id = null;
-                axios.get('/api/publishing-places', {
-                    params: { keyword: this.book.publishing_place.name }
-                }).then(function (res, rej) {
-                    _this2.publishing_places = res.data.publishing_places;
-                });
-            } else {
-                this.publishing_places = [];
-            }
-        },
-        selectPublishingPlace: function selectPublishingPlace(place) {
-            this.book.publishing_place_id = place.id;
-            this.book.publishing_place = place;
-            this.publishing_places = [];
-        },
+        // searchPublishingPlace(){
+        //     if(this.book.publishing_place.name){
+        //         this.book.publishing_place_id = null;
+        //         axios.get('/api/publishing-places', {
+        //             params: {keyword: this.book.publishing_place.name}
+        //         }).then((res, rej) => {
+        //             this.publishing_places = res.data.publishing_places;
+        //         });
+        //     } else {
+        //         this.publishing_places = [];
+        //     }
+        // },
+        // selectPublishingPlace(place){
+        //     this.book.publishing_place_id = place.id;
+        //     this.book.publishing_place = place;
+        //     this.publishing_places = [];
+        // },
         searchDewey: function searchDewey(keyword) {
-            var _this3 = this;
+            var _this2 = this;
 
             if (keyword.length > 0) {
                 this.book.dewey_id = null;
                 axios.get('/api/deweys', {
                     params: { keyword: keyword }
                 }).then(function (res, rej) {
-                    _this3.deweys = res.data.deweys;
+                    _this2.deweys = res.data.deweys;
                 });
             } else {
                 this.dewey = [];
@@ -16629,15 +16634,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.deweys = [];
         },
         searchCategories: function searchCategories() {
-            var _this4 = this;
+            var _this3 = this;
 
             if (this.category.length > 0) {
                 axios.get('/api/categories', {
                     params: { keyword: this.category }
                 }).then(function (res, rej) {
-                    console.log(_this4.selectedCategories);
-                    _this4.categories = res.data.categories.map(function (cat) {
-                        cat.isSelected = _this4.selectedCategories.filter(function (c) {
+                    console.log(_this3.selectedCategories);
+                    _this3.categories = res.data.categories.map(function (cat) {
+                        cat.isSelected = _this3.selectedCategories.filter(function (c) {
                             return c.id == cat.id;
                         }).length > 0;
                         return cat;
@@ -16666,18 +16671,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     created: function created() {
-        var _this5 = this;
+        var _this4 = this;
 
         if (this.$route.params.id) {
             var book = axios.get('/api/books/' + this.$route.params.id).then(function (res, rej) {
-                _this5.book = res.data.book;
-                if (!_this5.book.publisher) _this5.book.publisher = {};
+                _this4.book = res.data.book;
+                if (!_this4.book.publisher) _this4.book.publisher = {};
 
-                if (!_this5.book.publishing_place) _this5.book.publishing_place = {};
+                if (!_this4.book.publishing_place) _this4.book.publishing_place = {};
 
-                if (!_this5.book.dewey) _this5.book.dewey = {};
+                if (!_this4.book.dewey) _this4.book.dewey = {};
 
-                _this5.selectedCategories = _this5.book.categories;
+                _this4.selectedCategories = _this4.book.categories;
             });
         }
     }
@@ -17308,84 +17313,31 @@ var render = function() {
               1
             ),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group" }, [
-              _c("label", { attrs: { for: "publishing_place" } }, [
-                _vm._v("Publishing Place :")
-              ]),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.book.publishing_place.name,
-                    expression: "book.publishing_place.name"
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _c("label", { attrs: { for: "publishing_place" } }, [
+                  _vm._v("Publishing Place :")
+                ]),
+                _vm._v(" "),
+                _c("autocomplete", {
+                  attrs: {
+                    url: "/api/publishing-places",
+                    data_source: "publishing_places",
+                    data_field: "id",
+                    data_display: "name",
+                    class_name: "form-control input-sm",
+                    value: _vm.book.publishing_place.name
+                  },
+                  on: {
+                    browse: _vm.browsePublishingPlace,
+                    select: _vm.selectPublishingPlace
                   }
-                ],
-                staticClass: "form-control",
-                attrs: { type: "text", id: "publisher", autocomplete: "off" },
-                domProps: { value: _vm.book.publishing_place.name },
-                on: {
-                  keyup: _vm.searchPublishingPlace,
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(
-                      _vm.book.publishing_place,
-                      "name",
-                      $event.target.value
-                    )
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  directives: [
-                    {
-                      name: "show",
-                      rawName: "v-show",
-                      value: _vm.publishing_places.length > 0,
-                      expression: "publishing_places.length > 0"
-                    }
-                  ],
-                  staticClass: "publishing-place-dropdown"
-                },
-                [
-                  _c(
-                    "ul",
-                    {
-                      directives: [
-                        {
-                          name: "show",
-                          rawName: "v-show",
-                          value: _vm.publishing_places.length > 0,
-                          expression: "publishing_places.length > 0"
-                        }
-                      ]
-                    },
-                    _vm._l(_vm.publishing_places, function(pub) {
-                      return _c("li", {
-                        key: pub.id,
-                        domProps: { textContent: _vm._s(pub.name) },
-                        on: {
-                          click: function($event) {
-                            _vm.selectPublishingPlace(pub)
-                          }
-                        }
-                      })
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c("router-link", { attrs: { to: "/publishing-places" } }, [
-                    _vm._v("Manage publishing places")
-                  ])
-                ],
-                1
-              )
-            ]),
+                })
+              ],
+              1
+            ),
             _vm._v(" "),
             _c(
               "div",

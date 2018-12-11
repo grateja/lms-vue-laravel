@@ -42,25 +42,12 @@ class BooksController extends Controller
             'year_published' => 'min:1900|max:2200|numeric'
         ]);
 
-        // check if publisher changed
-        if($request->publisher_id == null && $request->publisher != null) {
-            $publisher = 
-                Publisher::where('name', '=', $request->publisher['name'])->first() ??
-                Publisher::create(['name' => $request->publisher['name']]);
-            $request['publisher_id'] = $publisher->id;
-        }
-
-        if($request->publishing_place_id == null && $request->publisher != null) {
-            $place = 
-                PublishingPlace::where('name', '=', $request->publishing_place['name'])->first() ??
-                PublishingPlace::create(['name' => $request->publishing_place['name']]);
-            
-            $request['publishing_place_id'] = $place->id;
-        }
-
         $book = Book::create(
             $request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'publisher_id', 'publishing_place_id', 'dewey_id'])
         );
+
+        $book->attachPublisher($request->publisher);
+        $book->attachPublishingPlace($request->publishing_place);
 
         $book->categories()->attach($request->selected_category_ids);
 
@@ -107,26 +94,10 @@ class BooksController extends Controller
             ], 404);
         }
 
-        // check if publisher changed
-        // if($request->publisher_id == null && $request->publisher != null && strlen($request->publisher['name']) > 0) {
-        //     $publisher = 
-        //         Publisher::where('name', '=', $request->publisher['name'])->first() ??
-        //         Publisher::create(['name' => $request->publisher['name']]);
-        //     $request['publisher_id'] = $publisher->id;
-        // }
+        $book->update($request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'dewey_id']));
 
-        // if($request->publishing_place_id == null && $request->publishing_place != null && strlen($request->publishing_place['name'] > 0)) {
-        //     $place = 
-        //         PublishingPlace::where('name', '=', $request->publishing_place['name'])->first() ??
-        //         PublishingPlace::create(['name' => $request->publishing_place['name']]);
-            
-        //     $request['publishing_place_id'] = $place->id;
-        // }
-
-        $book->update($request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'publishing_place_id', 'dewey_id']));
-
-        $book->attachPublisher($request->publisher['name']);
-        $book->attachPublishingPlace($request->publishing_place['name']);
+        $book->attachPublisher($request->publisher);
+        $book->attachPublishingPlace($request->publishing_place);
 
         return response()->json([
             'book' => $book
