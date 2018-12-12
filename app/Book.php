@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use App\Publisher;
 use App\PublishingPlace;
 use App\Category;
@@ -24,7 +25,7 @@ class Book extends Model
 
     public function dewey(){
         return $this->belongsTo(Dewey::class)
-            ->select(['id', 'decimal', 'classification', 'description']);
+            ->select(['id', 'decimal', 'classification', 'description', DB::raw('CONCAT(`decimal`, " - ", `classification`) as display')]);
     }
 
     public function categories(){

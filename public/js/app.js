@@ -16523,14 +16523,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -16562,18 +16554,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
-        // selectPublisher(item){
-        //     // this.book.publisher.name = item.name;
-        // },
-        // browsePublisher(val){
-        //     // this.book.publisher.name = val;
-        // },
-        // browsePublishingPlace(val) {
-        //     this.book.publishing_place.name = val;
-        // },
-        // selectPublishingPlace(item) {
-        //     this.book.publishing_place.name = item.name;
-        // },
         save: function save() {
             var _this = this;
 
@@ -16587,54 +16567,47 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.book.publishing_place_name = this.book.publishing_place.name;
 
             axios[action](url, this.book).then(function (res, rej) {
-                _this.$router.push('/books/' + res.data.book.id);
+                console.log(res.data);
+                // this.$router.push(`/books/${res.data.book.id}`);
             }).catch(function (err) {
                 _this.errors.errors = err.response.data.errors;
             });
         },
-        searchDewey: function searchDewey(keyword) {
-            var _this2 = this;
-
-            if (keyword.length > 0) {
-                this.book.dewey_id = null;
-                axios.get('/api/deweys', {
-                    params: { keyword: keyword }
-                }).then(function (res, rej) {
-                    _this2.deweys = res.data.deweys;
-                });
-            } else {
-                this.dewey = [];
-            }
-        },
         selectDewey: function selectDewey(dewey) {
-            this.book.dewey_id = dewey.id;
             this.book.dewey = dewey;
-            this.deweys = [];
+            this.book.dewey_id = dewey.id;
         },
-        searchCategories: function searchCategories() {
-            var _this3 = this;
 
-            if (this.category.length > 0) {
-                axios.get('/api/categories', {
-                    params: { keyword: this.category }
-                }).then(function (res, rej) {
-                    _this3.categories = res.data.categories.map(function (cat) {
-                        cat.isSelected = _this3.selectedCategories.filter(function (c) {
-                            return c.id == cat.id;
-                        }).length > 0;
-                        return cat;
-                    });
-                });
-            } else {
-                this.categories = [];
-            }
-        },
+        // searchCategories(){
+        //     if(this.category.length > 0){
+        //         axios.get('/api/categories', {
+        //             params: {keyword: this.category}
+        //         }).then((res, rej) => {
+        //             this.categories = res.data.categories.map(cat => {
+        //                 cat.isSelected = this.selectedCategories.filter(c => c.id == cat.id).length > 0;
+        //                 return cat;
+        //             });
+        //         })
+        //     } else {
+        //         this.categories = [];
+        //     }
+        // },
         selectCategory: function selectCategory(cat) {
-            if (cat && !cat.isSelected) {
-                this.selectedCategories.push(cat);
-                this.category = '';
-                this.categories = [];
+
+            if (!cat) return;
+
+            if (typeof cat === "string") {
+                cat = { name: cat };
             }
+
+            if (this.selectedCategories.filter(function (c) {
+                return c.name == cat.name;
+            }).length > 0) {
+                return;
+            }
+
+            this.selectedCategories.push(cat);
+            this.category = '';
         },
         removeCategory: function removeCategory(cat) {
             this.selectedCategories = this.selectedCategories.filter(function (c) {
@@ -16648,18 +16621,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     created: function created() {
-        var _this4 = this;
+        var _this2 = this;
 
         if (this.$route.params.id) {
             var book = axios.get('/api/books/' + this.$route.params.id).then(function (res, rej) {
-                _this4.book = res.data.book;
-                if (!_this4.book.publisher) _this4.book.publisher = {};
+                _this2.book = res.data.book;
+                if (!_this2.book.publisher) _this2.book.publisher = {};
 
-                if (!_this4.book.publishing_place) _this4.book.publishing_place = {};
+                if (!_this2.book.publishing_place) _this2.book.publishing_place = {};
 
-                if (!_this4.book.dewey) _this4.book.dewey = {};
+                if (!_this2.book.dewey) _this2.book.dewey = {};
 
-                _this4.selectedCategories = _this4.book.categories;
+                _this2.selectedCategories = _this2.book.categories;
             });
         }
     }
@@ -16806,7 +16779,7 @@ exports = module.exports = __webpack_require__(10)(false);
 
 
 // module
-exports.push([module.i, "\n.autocomplete[data-v-c191a05a]{\n    position: relative;\n}\n.autocomplete ul[data-v-c191a05a]{\n    background: white;\n    -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n    border-radius: 5px;\n    list-style: none;\n    position: absolute;\n    margin: 0px;\n    padding: 0px;\n    z-index: 9999;\n}\nli[data-v-c191a05a]{\n    border: 1px solid rgb(243, 243, 243);\n    cursor: default;\n    list-style: none;\n    margin: 0px;\n    padding: 5px 20px;\n}\nli[data-v-c191a05a]:last-child{\n    border-radius: 0px 0px 5px 5px;\n}\nli[data-v-c191a05a]:first-child{\n    border-radius: 5px 5px 0px 0px;\n}\nli[data-v-c191a05a]:hover{\n    color: rgb(0, 153, 255);\n}\nli.active[data-v-c191a05a]{\n    color:red;\n    background: silver;\n}\n", ""]);
+exports.push([module.i, "\n.autocomplete[data-v-c191a05a]{\n    position: relative;\n}\n.autocomplete ul[data-v-c191a05a]{\n    background: white;\n    -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n    border-radius: 5px;\n    list-style: none;\n    position: absolute;\n    margin: 0px;\n    padding: 0px;\n    z-index: 9999;\n}\nli[data-v-c191a05a]{\n    border: 1px solid rgb(243, 243, 243);\n    cursor: default;\n    list-style: none;\n    margin: 0px;\n    padding: 5px 20px;\n}\nli[data-v-c191a05a]:last-child{\n    border-radius: 0px 0px 5px 5px;\n}\nli[data-v-c191a05a]:first-child{\n    border-radius: 5px 5px 0px 0px;\n}\nli[data-v-c191a05a]:hover{\n    color: rgb(0, 153, 255);\n}\nli.active[data-v-c191a05a]{\n    color:rgb(0, 153, 255);\n    background: rgb(229, 255, 255);\n}\nli.link[data-v-c191a05a]:last-child{\n    font-weight: bold;\n    border-top: 1px solid silver;\n}\n", ""]);
 
 // exports
 
@@ -16827,15 +16800,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
         url: {},
         id: {},
         data_source: {},
-        data_field: {},
-        data_display: {},
+        data_field: {
+            default: 'id'
+        },
+        data_display: {
+            default: 'name'
+        },
         class_name: {
             default: 'form-control'
         },
@@ -16866,25 +16842,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         select: function select(item) {
             this.items = [];
-            this.$refs.keyword.focus();
-            this.$emit('select', item);
-            this.$emit('input', item[this.data_display]);
             this.selectedIndex = -1;
+            this.$refs.keyword.focus();
+            this.$emit('input', item[this.data_display]);
+            this.$emit('select', item);
         },
         blur: function blur() {
             var _this2 = this;
 
             setTimeout(function () {
                 _this2.items = [];
+                _this2.selectedIndex = -1;
             }, 500);
         },
-        keydown: function keydown(event) {
-            if (this.items.length == 0) return;
-
-            var keys = [40, 38, 27, 13];
+        keyup: function keyup(event) {
+            console.log(event.which);
+            var keys = [40, 38, 27];
 
             if (keys.includes(event.which)) {
-
+                if (this.items.length == 0) {
+                    return;
+                }
                 switch (event.which) {
                     case 40:
                         // key down
@@ -16904,16 +16882,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         event.preventDefault();
                         return;
                         break;
-                    case 13:
-                        // enter
-                        this.select(this.items[this.selectedIndex]);
-                        event.preventDefault();
-                        return;
-                        break;
                     default:
                         break;
                 }
                 this.navigate(this.items[this.selectedIndex]);
+            }
+        },
+        keydown: function keydown() {
+            if (this.items.length > 0 && this.selectedIndex > 0) {
+                this.select(this.items[this.selectedIndex]);
+            } else {
+                this.$emit('select', this.value);
+                this.items = [];
             }
         },
         navigate: function navigate(item) {
@@ -16941,10 +16921,20 @@ var render = function() {
           _vm.search($event.target.value)
         },
         blur: _vm.blur,
-        keydown: _vm.keydown
+        keyup: _vm.keyup,
+        keydown: function($event) {
+          if (
+            !("button" in $event) &&
+            _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+          ) {
+            return null
+          }
+          $event.preventDefault()
+          return _vm.keydown($event)
+        }
       }
     }),
-    _vm._v("\n    " + _vm._s(_vm.selectedIndex) + "\n    "),
+    _vm._v(" "),
     _vm.items.length > 0
       ? _c(
           "ul",
@@ -16965,7 +16955,7 @@ var render = function() {
               )
             }),
             _vm._v(" "),
-            _vm._t("footer")
+            _vm._t("link")
           ],
           2
         )
@@ -17287,9 +17277,7 @@ var render = function() {
                 _c("autocomplete", {
                   attrs: {
                     url: "/api/autocomplete/publishers",
-                    data_source: "publishers",
-                    data_display: "name",
-                    data_field: "id"
+                    data_source: "publishers"
                   },
                   model: {
                     value: _vm.book.publisher.name,
@@ -17300,9 +17288,16 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
-                _c("router-link", { attrs: { to: "/publishers" } }, [
-                  _vm._v("Manage publishers")
-                ])
+                _c(
+                  "li",
+                  { attrs: { slot: "footer" }, slot: "footer" },
+                  [
+                    _c("router-link", { attrs: { to: "/publishers" } }, [
+                      _vm._v("Manage publishers")
+                    ])
+                  ],
+                  1
+                )
               ],
               1
             ),
@@ -17318,9 +17313,14 @@ var render = function() {
                 _c("autocomplete", {
                   attrs: {
                     url: "/api/publishing-places",
-                    data_source: "publishing_places",
-                    data_field: "id",
-                    data_display: "name"
+                    data_source: "publishing_places"
+                  },
+                  model: {
+                    value: _vm.book.publishing_place.name,
+                    callback: function($$v) {
+                      _vm.$set(_vm.book.publishing_place, "name", $$v)
+                    },
+                    expression: "book.publishing_place.name"
                   }
                 })
               ],
@@ -17333,138 +17333,40 @@ var render = function() {
               [
                 _c("label", { attrs: { for: "dewey" } }, [_vm._v("Dewey :")]),
                 _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-sm-2" }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.book.dewey.decimal,
-                          expression: "book.dewey.decimal"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: {
-                        type: "text",
-                        id: "decimal",
-                        autocomplete: "off"
-                      },
-                      domProps: { value: _vm.book.dewey.decimal },
-                      on: {
-                        keyup: function($event) {
-                          _vm.searchDewey($event.target.value)
-                        },
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(
-                            _vm.book.dewey,
-                            "decimal",
-                            $event.target.value
-                          )
-                        }
-                      }
-                    })
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "col-sm-4" }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.book.dewey.classification,
-                          expression: "book.dewey.classification"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: {
-                        type: "text",
-                        id: "classification",
-                        autocomplete: "off"
-                      },
-                      domProps: { value: _vm.book.dewey.classification },
-                      on: {
-                        keyup: function($event) {
-                          _vm.searchDewey($event.target.value)
-                        },
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(
-                            _vm.book.dewey,
-                            "classification",
-                            $event.target.value
-                          )
-                        }
-                      }
-                    })
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "col-sm-6" }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.book.dewey.description,
-                          expression: "book.dewey.description"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { type: "text", id: "description", disabled: "" },
-                      domProps: { value: _vm.book.dewey.description },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(
-                            _vm.book.dewey,
-                            "description",
-                            $event.target.value
-                          )
-                        }
-                      }
-                    })
-                  ])
-                ]),
-                _vm._v(" "),
                 _c(
-                  "ul",
+                  "autocomplete",
                   {
-                    directives: [
-                      {
-                        name: "show",
-                        rawName: "v-show",
-                        value: _vm.deweys.length > 0,
-                        expression: "deweys.length > 0"
-                      }
-                    ]
-                  },
-                  _vm._l(_vm.deweys, function(d) {
-                    return _c("li", {
-                      key: d.id,
-                      domProps: {
-                        textContent: _vm._s(
-                          d.decimal + " - " + d.classification
-                        )
+                    attrs: {
+                      url: "/api/autocomplete/deweys",
+                      data_source: "deweys",
+                      data_display: "display"
+                    },
+                    on: { select: _vm.selectDewey },
+                    model: {
+                      value: _vm.book.dewey.display,
+                      callback: function($$v) {
+                        _vm.$set(_vm.book.dewey, "display", $$v)
                       },
-                      on: {
-                        click: function($event) {
-                          _vm.selectDewey(d)
-                        }
-                      }
-                    })
-                  })
-                ),
-                _vm._v(" "),
-                _c("router-link", { attrs: { to: "/deweys" } }, [
-                  _vm._v("Manage dewey decimals")
-                ])
+                      expression: "book.dewey.display"
+                    }
+                  },
+                  [
+                    _c(
+                      "li",
+                      {
+                        staticClass: "link",
+                        attrs: { slot: "link" },
+                        slot: "link"
+                      },
+                      [
+                        _c("router-link", { attrs: { to: "/deweys" } }, [
+                          _vm._v("Manage dewey decimals")
+                        ])
+                      ],
+                      1
+                    )
+                  ]
+                )
               ],
               1
             ),
@@ -17517,59 +17419,35 @@ var render = function() {
                   )
                 ]),
                 _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
+                _c(
+                  "autocomplete",
+                  {
+                    attrs: {
+                      url: "/api/autocomplete/categories",
+                      data_source: "categories"
+                    },
+                    on: { select: _vm.selectCategory },
+                    model: {
                       value: _vm.category,
+                      callback: function($$v) {
+                        _vm.category = $$v
+                      },
                       expression: "category"
                     }
-                  ],
-                  ref: "category",
-                  staticClass: "form-control",
-                  attrs: { type: "text", id: "category", autocomplete: "off" },
-                  domProps: { value: _vm.category },
-                  on: {
-                    keyup: _vm.searchCategories,
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.category = $event.target.value
-                    }
-                  }
-                }),
-                _vm._v(" "),
-                _c(
-                  "ul",
-                  {
-                    directives: [
-                      {
-                        name: "show",
-                        rawName: "v-show",
-                        value: _vm.categories.length > 0,
-                        expression: "categories.length > 0"
-                      }
-                    ]
                   },
-                  _vm._l(_vm.categories, function(cat) {
-                    return _c("li", {
-                      key: cat.id,
-                      class: cat.isSelected ? "active" : "",
-                      domProps: { textContent: _vm._s(cat.name) },
-                      on: {
-                        click: function($event) {
-                          _vm.selectCategory(cat)
-                        }
-                      }
-                    })
-                  })
-                ),
-                _vm._v(" "),
-                _c("router-link", { attrs: { to: "/categories" } }, [
-                  _vm._v("Manage categories")
-                ])
+                  [
+                    _c(
+                      "li",
+                      { attrs: { slot: "link" }, slot: "link" },
+                      [
+                        _c("router-link", { attrs: { to: "/categories" } }, [
+                          _vm._v("Manage categories")
+                        ])
+                      ],
+                      1
+                    )
+                  ]
+                )
               ],
               1
             ),

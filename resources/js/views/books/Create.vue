@@ -52,35 +52,22 @@
                 <div class="form-group">
                     <label for="publisher">Publisher :</label>
 
-                    <autocomplete v-model="book.publisher.name" url="/api/autocomplete/publishers" data_source="publishers" data_display="name" data_field="id"></autocomplete>
-                    <router-link to="/publishers">Manage publishers</router-link>
+                    <autocomplete v-model="book.publisher.name" url="/api/autocomplete/publishers" data_source="publishers"></autocomplete>
+                    <li slot="footer"><router-link to="/publishers">Manage publishers</router-link></li>
                 </div>
 
                 <div class="form-group">
                     <label for="publishing_place">Publishing Place :</label>
 
-                    <autocomplete url="/api/publishing-places" data_source="publishing_places" data_field="id" data_display="name"></autocomplete>
+                    <autocomplete v-model="book.publishing_place.name" url="/api/publishing-places" data_source="publishing_places"></autocomplete>
                 </div>
 
                 <div class="form-group">
                     <label for="dewey">Dewey :</label>
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <input type="text" id="decimal" v-model="book.dewey.decimal" class="form-control" @keyup="searchDewey($event.target.value)" autocomplete="off">
-                        </div>
-                        
-                        <div class="col-sm-4">
-                            <input type="text" id="classification" v-model="book.dewey.classification" class="form-control" @keyup="searchDewey($event.target.value)" autocomplete="off">
-                        </div>
 
-                        <div class="col-sm-6">
-                            <input type="text" id="description" v-model="book.dewey.description" class="form-control" disabled>
-                        </div>
-                    </div>
-                    <ul v-show="deweys.length > 0">
-                        <li v-for="d in deweys" :key="d.id" v-text="`${d.decimal} - ${d.classification}`" @click="selectDewey(d)"></li>
-                    </ul>
-                    <router-link to="/deweys">Manage dewey decimals</router-link>
+                    <autocomplete v-model="book.dewey.display" url="/api/autocomplete/deweys" data_source="deweys" data_display="display" @select="selectDewey">
+                        <li class="link" slot="link"><router-link to="/deweys">Manage dewey decimals</router-link></li>
+                    </autocomplete>
                 </div>
 
                 <div class="form-group">
@@ -92,11 +79,16 @@
                             </li>
                         </ul>
                     </div>
-                    <input type="text" id="category" class="form-control" v-model="category" @keyup="searchCategories" ref="category" autocomplete="off">
+
+                    <autocomplete v-model="category" url="/api/autocomplete/categories" @select="selectCategory" data_source="categories">
+                        <li slot="link"><router-link to="/categories">Manage categories</router-link></li>
+                    </autocomplete>
+
+                    <!-- <input type="text" id="category" class="form-control" v-model="category" @keyup="searchCategories" ref="category" autocomplete="off">
                     <ul v-show="categories.length > 0">
                         <li v-for="cat in categories" :key="cat.id" v-text="cat.name" @click="selectCategory(cat)" :class="cat.isSelected ? 'active' : ''"></li>
                     </ul>
-                    <router-link to="/categories">Manage categories</router-link>
+                    <router-link to="/categories">Manage categories</router-link> -->
                 </div>
 
                 <div class="form-group">
@@ -140,18 +132,6 @@ export default {
         }
     },
     methods: {
-        // selectPublisher(item){
-        //     // this.book.publisher.name = item.name;
-        // },
-        // browsePublisher(val){
-        //     // this.book.publisher.name = val;
-        // },
-        // browsePublishingPlace(val) {
-        //     this.book.publishing_place.name = val;
-        // },
-        // selectPublishingPlace(item) {
-        //     this.book.publishing_place.name = item.name;
-        // },
         save(){
             let id = this.$route.params.id
             let action = id ? 'put' : 'post';
@@ -165,48 +145,44 @@ export default {
             axios[action](url,
                 this.book,
             ).then((res, rej) => {
-                this.$router.push(`/books/${res.data.book.id}`);
+                console.log(res.data);
+                // this.$router.push(`/books/${res.data.book.id}`);
             }).catch(err => {
                 this.errors.errors = err.response.data.errors;
             });
         },
-        searchDewey(keyword){
-            if(keyword.length > 0){
-                this.book.dewey_id = null;
-                axios.get('/api/deweys', {
-                    params: {keyword: keyword}
-                }).then((res, rej) => {
-                    this.deweys = res.data.deweys;
-                })
-            } else {
-                this.dewey = [];
-            }
-        },
-        selectDewey(dewey) {
-            this.book.dewey_id = dewey.id;
+        selectDewey(dewey){
             this.book.dewey = dewey;
-            this.deweys = [];
+            this.book.dewey_id = dewey.id;
         },
-        searchCategories(){
-            if(this.category.length > 0){
-                axios.get('/api/categories', {
-                    params: {keyword: this.category}
-                }).then((res, rej) => {
-                    this.categories = res.data.categories.map(cat => {
-                        cat.isSelected = this.selectedCategories.filter(c => c.id == cat.id).length > 0;
-                        return cat;
-                    });
-                })
-            } else {
-                this.categories = [];
-            }
-        },
+        // searchCategories(){
+        //     if(this.category.length > 0){
+        //         axios.get('/api/categories', {
+        //             params: {keyword: this.category}
+        //         }).then((res, rej) => {
+        //             this.categories = res.data.categories.map(cat => {
+        //                 cat.isSelected = this.selectedCategories.filter(c => c.id == cat.id).length > 0;
+        //                 return cat;
+        //             });
+        //         })
+        //     } else {
+        //         this.categories = [];
+        //     }
+        // },
         selectCategory(cat){
-            if(cat && !cat.isSelected){
-                this.selectedCategories.push(cat);
-                this.category = '';
-                this.categories = [];
+
+            if(!cat) return;
+
+            if(typeof cat === "string"){
+                cat = {name: cat};
             }
+
+            if(this.selectedCategories.filter(c => {return c.name == cat.name}).length > 0){
+                return;
+            }
+
+            this.selectedCategories.push(cat);
+            this.category = '';
         },
         removeCategory(cat){
             this.selectedCategories = this.selectedCategories.filter(c => {

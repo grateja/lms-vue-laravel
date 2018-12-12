@@ -34,6 +34,8 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
+        return $request;
+
         // validate the request
         $this->validate($request, [
             'title' => 'required',

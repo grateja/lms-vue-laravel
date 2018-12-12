@@ -25,4 +25,6 @@ Route::resource('categories', 'CategoriesController');
 
 Route::group(['prefix' => 'autocomplete'], function(){
     Route::get('/publishers', 'PublishersController@autocomplete');
+    Route::get('/deweys', 'DeweysController@autocomplete');
+    Route::get('/categories', 'CategoriesController@autocomplete');
 });

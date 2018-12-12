@@ -3,10 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Dewey;
 
 class DeweysController extends Controller
 {
+    public function autocomplete(Request $request){
+        $deweys = Dewey::where('decimal', 'like', "$request->keyword%")
+            ->orWhere('classification', 'like', "%$request->keyword%")
+            ->limit(10)
+            ->select(['id', 'decimal', 'classification', 'description', DB::raw('CONCAT(`decimal`," - ", `classification`) as display')])
+            ->get();
+        
+        return response()->json([
+            'deweys' => $deweys
+        ], 200);
+    }
+
     /**
      * Display a listing of the resource.
      *

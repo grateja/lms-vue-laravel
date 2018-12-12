@@ -7,6 +7,17 @@ use App\Category;
 
 class CategoriesController extends Controller
 {
+    public function autocomplete(Request $request){
+        $categories = Category::where('name', 'like', "%$request->keyword%")
+            ->limit(10)
+            ->select(['id', 'name', 'description'])
+            ->get();
+        
+        return response()->json([
+            'categories' => $categories
+        ], 200);
+    }
+
     /**
      * Display a listing of the resource.
      *

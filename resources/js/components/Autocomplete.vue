@@ -1,10 +1,9 @@
 <template>
     <div class="autocomplete">
-        <input type="text" @input="search($event.target.value)" :id="id" :value="value" ref="keyword" :class="class_name" @blur="blur" autocomplete="off" @keydown="keydown">
-        {{selectedIndex}}
+        <input type="text" @input="search($event.target.value)" :id="id" :value="value" ref="keyword" :class="class_name" @blur="blur" autocomplete="off" @keyup="keyup" @keydown.enter.prevent="keydown">
         <ul v-if="items.length > 0">
             <li v-for="(item, i) in items" :key="item[data_field]" @click="select(item)" :class="{active: i == selectedIndex}" >{{item[data_display]}}</li>
-            <slot name="footer"></slot>
+            <slot name="link"></slot>
         </ul>
     </div>
 </template>
@@ -15,8 +14,12 @@ export default {
         url: {},
         id: {},
         data_source: {},
-        data_field: {},
-        data_display: {},
+        data_field: {
+            default: 'id'
+        },
+        data_display: {
+            default: 'name'
+        },
         class_name: {
             default: 'form-control'
         },
@@ -44,23 +47,25 @@ export default {
         },
         select(item){
             this.items = [];
-            this.$refs.keyword.focus();
-            this.$emit('select', item);
-            this.$emit('input', item[this.data_display]);
             this.selectedIndex = -1;
+            this.$refs.keyword.focus();
+            this.$emit('input', item[this.data_display]);
+            this.$emit('select', item);
         },
         blur(){
             setTimeout(() => {
                 this.items = [];
+                this.selectedIndex = -1;
             }, 500);
         },
-        keydown(event){
-            if(this.items.length == 0) return;
-
-            let keys = [40, 38, 27, 13];
+        keyup(event){
+            console.log(event.which);
+            let keys = [40, 38, 27];
 
             if(keys.includes(event.which)){
-
+                if(this.items.length == 0){
+                    return;
+                }
                 switch (event.which) {
                     case 40:
                         // key down
@@ -80,16 +85,18 @@ export default {
                         event.preventDefault();
                         return;
                         break;
-                    case 13:
-                        // enter
-                        this.select(this.items[this.selectedIndex]);
-                        event.preventDefault();
-                        return;
-                        break;
                     default:
                         break;
                 }
                 this.navigate(this.items[this.selectedIndex])
+            }
+        },
+        keydown(){
+            if(this.items.length > 0 && this.selectedIndex > 0){
+                this.select(this.items[this.selectedIndex]);
+            } else {
+                this.$emit('select', this.value);
+                this.items = [];
             }
         },
         navigate(item){
@@ -130,7 +137,11 @@ export default {
         color: rgb(0, 153, 255);
     }
     li.active{
-        color:red;
-        background: silver;
+        color:rgb(0, 153, 255);
+        background: rgb(229, 255, 255);
+    }
+    li.link:last-child{
+        font-weight: bold;
+        border-top: 1px solid silver;
     }
 </style>
