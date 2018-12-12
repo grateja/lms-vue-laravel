@@ -16562,18 +16562,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
-        selectPublisher: function selectPublisher(item) {
-            // this.book.publisher.name = item.name;
-        },
-        browsePublisher: function browsePublisher(val) {
-            // this.book.publisher.name = val;
-        },
-        browsePublishingPlace: function browsePublishingPlace(val) {
-            this.book.publishing_place.name = val;
-        },
-        selectPublishingPlace: function selectPublishingPlace(item) {
-            this.book.publishing_place.name = item.name;
-        },
+        // selectPublisher(item){
+        //     // this.book.publisher.name = item.name;
+        // },
+        // browsePublisher(val){
+        //     // this.book.publisher.name = val;
+        // },
+        // browsePublishingPlace(val) {
+        //     this.book.publishing_place.name = val;
+        // },
+        // selectPublishingPlace(item) {
+        //     this.book.publishing_place.name = item.name;
+        // },
         save: function save() {
             var _this = this;
 
@@ -17289,8 +17289,7 @@ var render = function() {
                     url: "/api/autocomplete/publishers",
                     data_source: "publishers",
                     data_display: "name",
-                    data_field: "id",
-                    class_name: "form-control input-sm"
+                    data_field: "id"
                   },
                   model: {
                     value: _vm.book.publisher.name,
@@ -17321,12 +17320,7 @@ var render = function() {
                     url: "/api/publishing-places",
                     data_source: "publishing_places",
                     data_field: "id",
-                    data_display: "name",
-                    class_name: "form-control input-sm"
-                  },
-                  on: {
-                    browse: _vm.browsePublishingPlace,
-                    select: _vm.selectPublishingPlace
+                    data_display: "name"
                   }
                 })
               ],
