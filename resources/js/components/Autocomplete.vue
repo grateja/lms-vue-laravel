@@ -1,89 +1,99 @@
 <template>
     <div class="autocomplete">
-        <input type="text" @input="update($event.target.value)" ref="input" > {{initial_value}}
-        <ul v-show="items.length > 0">
-            <li v-for="item in items" :key="item[data_field]" @click="select(item)">{{item[data_display]}}</li>
+        <input type="text" @input="search($event.target.value)" :id="id" :value="value" ref="keyword" :class="class_name" @blur="blur" autocomplete="off" @keydown="keydown">
+        {{selectedIndex}}
+        <ul v-if="items.length > 0">
+            <li v-for="(item, i) in items" :key="item[data_field]" @click="select(item)" :class="{active: i == selectedIndex}" >{{item[data_display]}}</li>
+            <slot name="footer"></slot>
         </ul>
     </div>
 </template>
 
 <script>
 export default {
-    props:
-        ['url',
-        'data_source',
-        'data_field',
-        'data_display',
-        'class_name',
-        'value',
-        'initial_value']
-    ,
+    props:{
+        url: {},
+        id: {},
+        data_source: {},
+        data_field: {},
+        data_display: {},
+        class_name: {
+            default: 'form-control'
+        },
+        value: {}
+    },
     name: 'autocomplete',
     data(){
         return {
-            focused: false,
-            items:[]
-            // content: this.value
+            items: [],
+            selectedIndex: -1
         }
     },
-    // props: ['url', 'data_source', 'data_field', 'data_display', 'class_name', 'value'],
     methods: {
         search(val){
-            console.log(val)
-            // this.$emit('input', this.keyword);
-            if(val){
+            this.$emit('input', val);
+            if(val.length > 0){
                 axios.get(this.url, {
                     params: {keyword: val}
                 }).then((res, rej) => {
-
                     this.items = res.data[this.data_source];
                 });
             } else {
-                // this.items = [];
+                this.items = [];
             }
         },
         select(item){
             this.items = [];
             this.$refs.keyword.focus();
-            this.keyword = item[this.data_display];
             this.$emit('select', item);
+            this.$emit('input', item[this.data_display]);
+            this.selectedIndex = -1;
         },
         blur(){
             setTimeout(() => {
                 this.items = [];
             }, 500);
         },
-        update(val){
-            console.log(this.$refs.input.value)
-            if(val == 'keme')
-                this.some = 'wala';
-            if(val){
-                axios.get(this.url, {
-                    params: {keyword: val}
-                }).then((res, rej) => {
-                    // this.getItems = res.data[this.data_source];
-                    this.$emit('show', res.data[this.data_source]);
-                    this.items = res.data[this.data_source];
-                    // console.log(res.data[this.data_source]);
-                });
-            } else {
-                // this.items = [];
-            }
-            console.log(this.value)
-            this.$emit('input', this.value);
-        }
-    },
-    computed: {
-        getItems(){
-            return {
-                get(){
-                    return this.items;
-                },
-                set(value){
-                    console.log('value', value);
-                    this.items = value;
+        keydown(event){
+            if(this.items.length == 0) return;
+
+            let keys = [40, 38, 27, 13];
+
+            if(keys.includes(event.which)){
+
+                switch (event.which) {
+                    case 40:
+                        // key down
+                        this.selectedIndex += this.selectedIndex < this.items.length -  1 ? 1 : 0;
+                        event.preventDefault();
+                        break;
+                    case 38:
+                        // key up
+                        this.selectedIndex -= this.selectedIndex > 0 ? 1 : 0;
+                        event.preventDefault();
+                        break;
+                    case 27:
+                        // escape
+                        this.items = [];
+                        this.$emit('input', '');
+                        this.selectedIndex = -1;
+                        event.preventDefault();
+                        return;
+                        break;
+                    case 13:
+                        // enter
+                        this.select(this.items[this.selectedIndex]);
+                        event.preventDefault();
+                        return;
+                        break;
+                    default:
+                        break;
                 }
+                this.navigate(this.items[this.selectedIndex])
             }
+        },
+        navigate(item){
+            this.$emit('input', item[this.data_display]);
         }
     }
 }
@@ -118,5 +128,9 @@ export default {
     }
     li:hover{
         color: rgb(0, 153, 255);
+    }
+    li.active{
+        color:red;
+        background: silver;
     }
 </style>

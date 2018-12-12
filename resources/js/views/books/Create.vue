@@ -52,7 +52,7 @@
                 <div class="form-group">
                     <label for="publisher">Publisher :</label>
 
-                    <autocomplete v-model="keme" url="/api/autocomplete/publishers" data_source="publishers" data_display="name" data_field="id" class_name="form-control input-sm" :initial_value="keme"></autocomplete>
+                    <autocomplete v-model="book.publisher.name" url="/api/autocomplete/publishers" data_source="publishers" data_display="name" data_field="id" class_name="form-control input-sm"></autocomplete>
                     <router-link to="/publishers">Manage publishers</router-link>
                 </div>
 

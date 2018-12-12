@@ -16806,7 +16806,7 @@ exports = module.exports = __webpack_require__(10)(false);
 
 
 // module
-exports.push([module.i, "\n.autocomplete[data-v-c191a05a]{\n    position: relative;\n}\n.autocomplete ul[data-v-c191a05a]{\n    background: white;\n    -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n    border-radius: 5px;\n    list-style: none;\n    position: absolute;\n    margin: 0px;\n    padding: 0px;\n    z-index: 9999;\n}\nli[data-v-c191a05a]{\n    border: 1px solid rgb(243, 243, 243);\n    cursor: default;\n    list-style: none;\n    margin: 0px;\n    padding: 5px 20px;\n}\nli[data-v-c191a05a]:last-child{\n    border-radius: 0px 0px 5px 5px;\n}\nli[data-v-c191a05a]:first-child{\n    border-radius: 5px 5px 0px 0px;\n}\nli[data-v-c191a05a]:hover{\n    color: rgb(0, 153, 255);\n}\n", ""]);
+exports.push([module.i, "\n.autocomplete[data-v-c191a05a]{\n    position: relative;\n}\n.autocomplete ul[data-v-c191a05a]{\n    background: white;\n    -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.418);\n    border-radius: 5px;\n    list-style: none;\n    position: absolute;\n    margin: 0px;\n    padding: 0px;\n    z-index: 9999;\n}\nli[data-v-c191a05a]{\n    border: 1px solid rgb(243, 243, 243);\n    cursor: default;\n    list-style: none;\n    margin: 0px;\n    padding: 5px 20px;\n}\nli[data-v-c191a05a]:last-child{\n    border-radius: 0px 0px 5px 5px;\n}\nli[data-v-c191a05a]:first-child{\n    border-radius: 5px 5px 0px 0px;\n}\nli[data-v-c191a05a]:hover{\n    color: rgb(0, 153, 255);\n}\nli.active[data-v-c191a05a]{\n    color:red;\n    background: silver;\n}\n", ""]);
 
 // exports
 
@@ -16826,42 +16826,50 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['url', 'data_source', 'data_field', 'data_display', 'class_name', 'value', 'initial_value'],
-
+    props: {
+        url: {},
+        id: {},
+        data_source: {},
+        data_field: {},
+        data_display: {},
+        class_name: {
+            default: 'form-control'
+        },
+        value: {}
+    },
     name: 'autocomplete',
     data: function data() {
         return {
-            focused: false,
-            items: []
-            // content: this.value
+            items: [],
+            selectedIndex: -1
         };
     },
 
-    // props: ['url', 'data_source', 'data_field', 'data_display', 'class_name', 'value'],
     methods: {
         search: function search(val) {
             var _this = this;
 
-            console.log(val);
-            // this.$emit('input', this.keyword);
-            if (val) {
+            this.$emit('input', val);
+            if (val.length > 0) {
                 axios.get(this.url, {
                     params: { keyword: val }
                 }).then(function (res, rej) {
-
                     _this.items = res.data[_this.data_source];
                 });
             } else {
-                // this.items = [];
+                this.items = [];
             }
         },
         select: function select(item) {
             this.items = [];
             this.$refs.keyword.focus();
-            this.keyword = item[this.data_display];
             this.$emit('select', item);
+            this.$emit('input', item[this.data_display]);
+            this.selectedIndex = -1;
         },
         blur: function blur() {
             var _this2 = this;
@@ -16870,38 +16878,46 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this2.items = [];
             }, 500);
         },
-        update: function update(val) {
-            var _this3 = this;
+        keydown: function keydown(event) {
+            if (this.items.length == 0) return;
 
-            console.log(this.$refs.input.value);
-            if (val == 'keme') this.some = 'wala';
-            if (val) {
-                axios.get(this.url, {
-                    params: { keyword: val }
-                }).then(function (res, rej) {
-                    // this.getItems = res.data[this.data_source];
-                    _this3.$emit('show', res.data[_this3.data_source]);
-                    _this3.items = res.data[_this3.data_source];
-                    // console.log(res.data[this.data_source]);
-                });
-            } else {
-                // this.items = [];
-            }
-            console.log(this.value);
-            this.$emit('input', this.value);
-        }
-    },
-    computed: {
-        getItems: function getItems() {
-            return {
-                get: function get() {
-                    return this.items;
-                },
-                set: function set(value) {
-                    console.log('value', value);
-                    this.items = value;
+            var keys = [40, 38, 27, 13];
+
+            if (keys.includes(event.which)) {
+
+                switch (event.which) {
+                    case 40:
+                        // key down
+                        this.selectedIndex += this.selectedIndex < this.items.length - 1 ? 1 : 0;
+                        event.preventDefault();
+                        break;
+                    case 38:
+                        // key up
+                        this.selectedIndex -= this.selectedIndex > 0 ? 1 : 0;
+                        event.preventDefault();
+                        break;
+                    case 27:
+                        // escape
+                        this.items = [];
+                        this.$emit('input', '');
+                        this.selectedIndex = -1;
+                        event.preventDefault();
+                        return;
+                        break;
+                    case 13:
+                        // enter
+                        this.select(this.items[this.selectedIndex]);
+                        event.preventDefault();
+                        return;
+                        break;
+                    default:
+                        break;
                 }
-            };
+                this.navigate(this.items[this.selectedIndex]);
+            }
+        },
+        navigate: function navigate(item) {
+            this.$emit('input', item[this.data_display]);
         }
     }
 });
@@ -16916,42 +16932,44 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "autocomplete" }, [
     _c("input", {
-      ref: "input",
-      attrs: { type: "text" },
+      ref: "keyword",
+      class: _vm.class_name,
+      attrs: { type: "text", id: _vm.id, autocomplete: "off" },
+      domProps: { value: _vm.value },
       on: {
         input: function($event) {
-          _vm.update($event.target.value)
-        }
+          _vm.search($event.target.value)
+        },
+        blur: _vm.blur,
+        keydown: _vm.keydown
       }
     }),
-    _vm._v(" " + _vm._s(_vm.initial_value) + "\n    "),
-    _c(
-      "ul",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.items.length > 0,
-            expression: "items.length > 0"
-          }
-        ]
-      },
-      _vm._l(_vm.items, function(item) {
-        return _c(
-          "li",
-          {
-            key: item[_vm.data_field],
-            on: {
-              click: function($event) {
-                _vm.select(item)
-              }
-            }
-          },
-          [_vm._v(_vm._s(item[_vm.data_display]))]
+    _vm._v("\n    " + _vm._s(_vm.selectedIndex) + "\n    "),
+    _vm.items.length > 0
+      ? _c(
+          "ul",
+          [
+            _vm._l(_vm.items, function(item, i) {
+              return _c(
+                "li",
+                {
+                  key: item[_vm.data_field],
+                  class: { active: i == _vm.selectedIndex },
+                  on: {
+                    click: function($event) {
+                      _vm.select(item)
+                    }
+                  }
+                },
+                [_vm._v(_vm._s(item[_vm.data_display]))]
+              )
+            }),
+            _vm._v(" "),
+            _vm._t("footer")
+          ],
+          2
         )
-      })
-    )
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -17272,15 +17290,14 @@ var render = function() {
                     data_source: "publishers",
                     data_display: "name",
                     data_field: "id",
-                    class_name: "form-control input-sm",
-                    initial_value: _vm.keme
+                    class_name: "form-control input-sm"
                   },
                   model: {
-                    value: _vm.keme,
+                    value: _vm.book.publisher.name,
                     callback: function($$v) {
-                      _vm.keme = $$v
+                      _vm.$set(_vm.book.publisher, "name", $$v)
                     },
-                    expression: "keme"
+                    expression: "book.publisher.name"
                   }
                 }),
                 _vm._v(" "),
