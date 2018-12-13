@@ -35,17 +35,6 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        // return Category::whereIn('name', $request->categories->toArray());
-
-
-        // return gettype(collect($request->categories)->map(function($cat){
-        //     return $cat['name'];
-        // })->toArray());
-        // return Category::whereIn('name',
-        //     collect($request->categories)->map(function($cat){
-        //         return $cat['name'];
-        //     })->toArray())->get();
-
         return DB::transaction(function () use ($request) {
             // validate the request
             $this->validate($request, [
@@ -61,7 +50,6 @@ class BooksController extends Controller
 
             $book->attachPublisher($request->publisher_name);
             $book->attachPublishingPlace($request->publishing_place_name);
-            // $book->categories()->attach($request->selected_category_ids);
             $book->attachCategories(collect($request->categories));
 
             return response()->json([
