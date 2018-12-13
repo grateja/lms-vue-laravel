@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Book;
 use App\Publisher;
 use App\PublishingPlace;
 use App\Category;
-
 class BooksController extends Controller
 {
     /**
@@ -46,25 +46,28 @@ class BooksController extends Controller
         //         return $cat['name'];
         //     })->toArray())->get();
 
-        // validate the request
-        $this->validate($request, [
-            'title' => 'required',
-            'price' => 'required',
-            'type_id' => 'required',
-            'year_published' => 'min:1900|max:2200|numeric'
-        ]);
+        return DB::transaction(function () use ($request) {
+            // validate the request
+            $this->validate($request, [
+                'title' => 'required',
+                'price' => 'required',
+                'type_id' => 'required',
+                'year_published' => 'min:1900|max:2200|numeric'
+            ]);
 
-        $book = Book::create(
-            $request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'publisher_id', 'publishing_place_id', 'dewey_id'])
-        );
+            $book = Book::create(
+                $request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'publisher_id', 'publishing_place_id', 'dewey_id'])
+            );
 
-        $book->attachPublisher($request->publisher_name);
-        $book->attachPublishingPlace($request->publishing_place_name);
-        $book->categories()->attach($request->selected_category_ids);
+            $book->attachPublisher($request->publisher_name);
+            $book->attachPublishingPlace($request->publishing_place_name);
+            $book->categories()->attach($request->selected_category_ids);
 
-        return response()->json([
-            'book' => $book
-        ], 200);
+            return response()->json([
+                'book' => $book
+            ], 200);
+        });
+        
     }
 
     /**
@@ -105,14 +108,17 @@ class BooksController extends Controller
             ], 404);
         }
 
-        $book->update($request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'dewey_id']));
+        return DB::transaction(function () use ($request, $book){
+            $book->update($request->only(['type_id', 'price', 'title', 'author', 'isbn', 'year_published', 'edition', 'volume', 'dewey_id']));
+    
+            $book->attachPublisher($request->publisher_name);
+            $book->attachPublishingPlace($request->publishing_place_name);
+    
+            return response()->json([
+                'book' => $book
+            ], 200);
+        });
 
-        $book->attachPublisher($request->publisher_name);
-        $book->attachPublishingPlace($request->publishing_place_name);
-
-        return response()->json([
-            'book' => $book
-        ], 200);
     }
 
     /**
