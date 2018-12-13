@@ -64,4 +64,20 @@ class Book extends Model
 
         return null;
     }
+
+    public function attachCategories($categories) {
+        if(count($categories) > 0){
+            
+            $categories = $categories->map(function($category){
+                $_category = Category::firstOrCreate(
+                    ['name' => $category['name']]
+                );
+                return $_category->id;
+            });
+    
+            $this->categories()->sync($categories);
+
+        }
+
+    }
 }

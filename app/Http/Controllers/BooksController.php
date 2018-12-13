@@ -61,7 +61,8 @@ class BooksController extends Controller
 
             $book->attachPublisher($request->publisher_name);
             $book->attachPublishingPlace($request->publishing_place_name);
-            $book->categories()->attach($request->selected_category_ids);
+            // $book->categories()->attach($request->selected_category_ids);
+            $book->attachCategories(collect($request->categories));
 
             return response()->json([
                 'book' => $book
@@ -113,6 +114,8 @@ class BooksController extends Controller
     
             $book->attachPublisher($request->publisher_name);
             $book->attachPublishingPlace($request->publishing_place_name);
+            $book->attachCategories(collect($request->categories));
+
     
             return response()->json([
                 'book' => $book
