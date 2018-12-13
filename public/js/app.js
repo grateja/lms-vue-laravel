@@ -16542,7 +16542,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 dewey: {},
                 selected_category_ids: []
             },
-            // selectedCategories: [],
+            automatic_type_id: null,
             publishers: [],
             publishing_places: [],
             deweys: [],
@@ -16563,16 +16563,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             var action = id ? 'put' : 'post';
             var url = id ? '/api/books/' + id : '/api/books';
 
-            // this.book.selected_category_ids = this.selectedCategoriesIDs();
-
             this.book.publisher_name = this.book.publisher.name;
             this.book.publishing_place_name = this.book.publishing_place.name;
 
-            console.log('before save', this.book);
+            if (this.automatic_type_id) {
+                this.book.type_id = null;
+            }
 
             axios[action](url, this.book).then(function (res, rej) {
-                console.log(res.data);
-                // this.$router.push(`/books/${res.data.book.id}`);
+                _this.$router.push('/books/' + res.data.book.id);
             }).catch(function (err) {
                 _this.errors.errors = err.response.data.errors;
             });
@@ -16585,21 +16584,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 this.book.dewey = { display: dewey };
             }
         },
-
-        // searchCategories(){
-        //     if(this.category.length > 0){
-        //         axios.get('/api/categories', {
-        //             params: {keyword: this.category}
-        //         }).then((res, rej) => {
-        //             this.categories = res.data.categories.map(cat => {
-        //                 cat.isSelected = this.selectedCategories.filter(c => c.id == cat.id).length > 0;
-        //                 return cat;
-        //             });
-        //         })
-        //     } else {
-        //         this.categories = [];
-        //     }
-        // },
         selectCategory: function selectCategory(cat) {
 
             if (!cat) return;
@@ -16627,11 +16611,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.book.categories = this.book.categories.filter(function (c) {
                 return c != cat;
             });
-        },
-        selectedCategoriesIDs: function selectedCategoriesIDs() {
-            return this.book.categories.map(function (c) {
-                return c.id;
-            });
         }
     },
     created: function created() {
@@ -16647,8 +16626,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 if (!_this2.book.dewey) _this2.book.dewey = {};
 
                 if (!_this2.book.categories) _this2.book.categories = [];
-
-                // this.selectedCategories = this.book.categories;
             });
         }
     }
@@ -34269,7 +34246,12 @@ var render = function() {
                   }
                 ],
                 staticClass: "form-control",
-                attrs: { type: "text", id: "type_id" },
+                attrs: {
+                  type: "text",
+                  id: "type_id",
+                  disabled: _vm.automatic_type_id,
+                  placeholder: "Leave empty to create automatically unique"
+                },
                 domProps: { value: _vm.book.type_id },
                 on: {
                   input: function($event) {
@@ -34280,6 +34262,49 @@ var render = function() {
                   }
                 }
               }),
+              _vm._v(" "),
+              _c("label", { attrs: { for: "automatic" } }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.automatic_type_id,
+                      expression: "automatic_type_id"
+                    }
+                  ],
+                  attrs: { type: "checkbox", id: "automatic" },
+                  domProps: {
+                    checked: Array.isArray(_vm.automatic_type_id)
+                      ? _vm._i(_vm.automatic_type_id, null) > -1
+                      : _vm.automatic_type_id
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.automatic_type_id,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = null,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 && (_vm.automatic_type_id = $$a.concat([$$v]))
+                        } else {
+                          $$i > -1 &&
+                            (_vm.automatic_type_id = $$a
+                              .slice(0, $$i)
+                              .concat($$a.slice($$i + 1)))
+                        }
+                      } else {
+                        _vm.automatic_type_id = $$c
+                      }
+                    }
+                  }
+                }),
+                _vm._v(
+                  "\n                    Automatically create\n                "
+                )
+              ]),
               _vm._v(" "),
               _c("span", {
                 directives: [
@@ -34895,7 +34920,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
             books: [],
             page_count: 0,
-            current_page: this.$route.query.page,
             errors: [],
             loading: false
         };
@@ -34903,7 +34927,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         filter: function filter() {
-            this.current_page = 1;
             this.load();
         },
         load: function load() {
@@ -34914,7 +34937,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             axios.get('/api/books', {
                 params: {
                     keyword: this.query.keyword,
-                    page: this.current_page
+                    page: this.$route.query.page
                 }
             }).then(function (res, rej) {
                 _this.loading = false;
@@ -34930,7 +34953,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         navigate: function navigate(page) {
-            this.current_page = page;
             this.load();
         }
     },
@@ -35000,7 +35022,11 @@ var render = function() {
         {
           key: page,
           staticClass: "page-item",
-          class: { active: _vm.$route.query.page == page }
+          class: {
+            active:
+              _vm.$route.query.page == page ||
+              (!_vm.$route.query.page && page == 1)
+          }
         },
         [
           _c(

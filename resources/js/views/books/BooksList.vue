@@ -46,14 +46,12 @@ export default {
             },
             books: [],
             page_count: 0,
-            current_page: this.$route.query.page,
             errors: [],
             loading: false
         }
     },
     methods: {
         filter(){
-            this.current_page = 1;
             this.load();
         },
         load(){
@@ -62,7 +60,7 @@ export default {
             axios.get('/api/books', {
                 params: {
                     keyword: this.query.keyword,
-                    page: this.current_page
+                    page: this.$route.query.page
                 }
             })
             .then((res, rej) => {
@@ -80,7 +78,6 @@ export default {
             });
         },
         navigate(page){
-            this.current_page = page;
             this.load();
         }
     },

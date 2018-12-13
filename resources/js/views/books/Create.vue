@@ -13,7 +13,13 @@
 
                 <div class="form-group">
                     <label for="type_id">Type ID :</label>
-                    <input type="text" id="type_id" class="form-control" v-model="book.type_id">
+                    <input type="text" id="type_id" class="form-control" v-model="book.type_id" :disabled="automatic_type_id" placeholder="Leave empty to create automatically unique">
+
+                    <label for="automatic">
+                        <input type="checkbox" v-model="automatic_type_id" id="automatic">
+                        Automatically create
+                    </label>
+
                     <span class="text-danger" v-show="errors.has('type_id')" v-text="errors.get('type_id')"></span>
                 </div>
 
@@ -83,12 +89,6 @@
                     <autocomplete v-model="category" url="/api/autocomplete/categories" @select="selectCategory" data_source="categories">
                         <li slot="link"><router-link tabindex="-1" to="/categories">Manage categories</router-link></li>
                     </autocomplete>
-
-                    <!-- <input type="text" id="category" class="form-control" v-model="category" @keyup="searchCategories" ref="category" autocomplete="off">
-                    <ul v-show="categories.length > 0">
-                        <li v-for="cat in categories" :key="cat.id" v-text="cat.name" @click="selectCategory(cat)" :class="cat.isSelected ? 'active' : ''"></li>
-                    </ul>
-                    <router-link to="/categories">Manage categories</router-link> -->
                 </div>
 
                 <div class="form-group">
@@ -119,7 +119,7 @@ export default {
                 dewey: {},
                 selected_category_ids: []
             },
-            // selectedCategories: [],
+            automatic_type_id: null,
             publishers: [],
             publishing_places: [],
             deweys: [],
@@ -137,18 +137,17 @@ export default {
             let action = id ? 'put' : 'post';
             let url = id ? `/api/books/${id}` : '/api/books'
 
-            // this.book.selected_category_ids = this.selectedCategoriesIDs();
-
             this.book.publisher_name = this.book.publisher.name;
             this.book.publishing_place_name = this.book.publishing_place.name;
 
-            console.log('before save', this.book);
+            if(this.automatic_type_id) {
+                this.book.type_id = null;
+            }
 
             axios[action](url,
                 this.book,
             ).then((res, rej) => {
-                console.log(res.data);
-                // this.$router.push(`/books/${res.data.book.id}`);
+                this.$router.push(`/books/${res.data.book.id}`);
             }).catch(err => {
                 this.errors.errors = err.response.data.errors;
             });
@@ -161,20 +160,6 @@ export default {
                 this.book.dewey = {display: dewey};
             }
         },
-        // searchCategories(){
-        //     if(this.category.length > 0){
-        //         axios.get('/api/categories', {
-        //             params: {keyword: this.category}
-        //         }).then((res, rej) => {
-        //             this.categories = res.data.categories.map(cat => {
-        //                 cat.isSelected = this.selectedCategories.filter(c => c.id == cat.id).length > 0;
-        //                 return cat;
-        //             });
-        //         })
-        //     } else {
-        //         this.categories = [];
-        //     }
-        // },
         selectCategory(cat){
 
             if(!cat) return;
@@ -200,9 +185,6 @@ export default {
             this.book.categories = this.book.categories.filter(c => {
                 return c != cat;
             });
-        },
-        selectedCategoriesIDs(){
-            return this.book.categories.map(c => {return c.id});
         }
     },
     created(){
@@ -221,8 +203,6 @@ export default {
                     
                     if(!this.book.categories)
                         this.book.categories = [];
-
-                    // this.selectedCategories = this.book.categories;
                 });
         }
     }

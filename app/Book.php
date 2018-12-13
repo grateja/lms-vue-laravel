@@ -78,6 +78,13 @@ class Book extends Model
             $this->categories()->sync($categories);
 
         }
+    }
 
+    public static function generateTypeID() {
+        $val = rand(100000000, 999999999);
+        if(!Book::where(['type_id' => $val])->first()){
+            return $val;
+        }
+        return Book::generateTypeID();
     }
 }
