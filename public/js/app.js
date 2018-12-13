@@ -16419,6 +16419,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helpers_FormHelpers_js__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Autocomplete_vue__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Autocomplete_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_Autocomplete_vue__);
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 //
 //
 //
@@ -16540,7 +16542,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 dewey: {},
                 selected_category_ids: []
             },
-            selectedCategories: [],
+            // selectedCategories: [],
             publishers: [],
             publishing_places: [],
             deweys: [],
@@ -16561,10 +16563,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var action = id ? 'put' : 'post';
             var url = id ? '/api/books/' + id : '/api/books';
 
-            this.book.selected_category_ids = this.selectedCategoriesIDs();
+            // this.book.selected_category_ids = this.selectedCategoriesIDs();
 
             this.book.publisher_name = this.book.publisher.name;
             this.book.publishing_place_name = this.book.publishing_place.name;
+
+            console.log('before save', this.book);
 
             axios[action](url, this.book).then(function (res, rej) {
                 console.log(res.data);
@@ -16574,8 +16578,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         selectDewey: function selectDewey(dewey) {
-            this.book.dewey = dewey;
-            this.book.dewey_id = dewey.id;
+            if (dewey && (typeof dewey === 'undefined' ? 'undefined' : _typeof(dewey)) === "object") {
+                this.book.dewey = dewey;
+                this.book.dewey_id = dewey.id;
+            } else {
+                this.book.dewey = { display: dewey };
+            }
         },
 
         // searchCategories(){
@@ -16600,22 +16608,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 cat = { name: cat };
             }
 
-            if (this.selectedCategories.filter(function (c) {
+            if (!this.book.categories) {
+                this.book.categories = [cat];
+                this.category = '';
+                return;
+            }
+
+            if (this.book.categories.filter(function (c) {
                 return c.name == cat.name;
             }).length > 0) {
                 return;
             }
 
-            this.selectedCategories.push(cat);
+            this.book.categories.push(cat);
             this.category = '';
         },
         removeCategory: function removeCategory(cat) {
-            this.selectedCategories = this.selectedCategories.filter(function (c) {
+            this.book.categories = this.book.categories.filter(function (c) {
                 return c != cat;
             });
         },
         selectedCategoriesIDs: function selectedCategoriesIDs() {
-            return this.selectedCategories.map(function (c) {
+            return this.book.categories.map(function (c) {
                 return c.id;
             });
         }
@@ -16632,7 +16646,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                 if (!_this2.book.dewey) _this2.book.dewey = {};
 
-                _this2.selectedCategories = _this2.book.categories;
+                if (!_this2.book.categories) _this2.book.categories = [];
+
+                // this.selectedCategories = this.book.categories;
             });
         }
     }
@@ -17380,43 +17396,40 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "categories" }, [
-                  _c(
-                    "ul",
-                    {
-                      directives: [
-                        {
-                          name: "show",
-                          rawName: "v-show",
-                          value: _vm.selectedCategories.length > 0,
-                          expression: "selectedCategories.length > 0"
-                        }
-                      ]
-                    },
-                    _vm._l(_vm.selectedCategories, function(cat) {
-                      return _c(
-                        "li",
-                        { key: cat.id, staticClass: "category" },
-                        [
-                          _vm._v(
-                            _vm._s(cat.name) + "\n                            "
-                          ),
-                          _c(
-                            "button",
+                  _vm.book.categories && _vm.book.categories.length > 0
+                    ? _c(
+                        "ul",
+                        _vm._l(_vm.book.categories, function(cat) {
+                          return _c(
+                            "li",
                             {
-                              staticClass: "btn btn-default btn-xs",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  _vm.removeCategory(cat)
-                                }
-                              }
+                              key: cat.id,
+                              staticClass: "category",
+                              attrs: { "data-keme": cat.id }
                             },
-                            [_vm._v("remove")]
+                            [
+                              _vm._v(
+                                _vm._s(cat.name) +
+                                  "\n                            "
+                              ),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-default btn-xs",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.removeCategory(cat)
+                                    }
+                                  }
+                                },
+                                [_vm._v("remove")]
+                              )
+                            ]
                           )
-                        ]
+                        })
                       )
-                    })
-                  )
+                    : _vm._e()
                 ]),
                 _vm._v(" "),
                 _c(
@@ -17440,9 +17453,11 @@ var render = function() {
                       "li",
                       { attrs: { slot: "link" }, slot: "link" },
                       [
-                        _c("router-link", { attrs: { to: "/categories" } }, [
-                          _vm._v("Manage categories")
-                        ])
+                        _c(
+                          "router-link",
+                          { attrs: { tabindex: "-1", to: "/categories" } },
+                          [_vm._v("Manage categories")]
+                        )
                       ],
                       1
                     )

@@ -73,15 +73,15 @@
                 <div class="form-group">
                     <label for="categories">Categories :</label>
                     <div class="categories">
-                        <ul v-show="selectedCategories.length > 0">
-                            <li class="category" v-for="cat in selectedCategories" :key="cat.id">{{cat.name}}
+                        <ul v-if="book.categories && book.categories.length > 0">
+                            <li class="category" v-for="cat in book.categories" :key="cat.id" :data-keme="cat.id">{{cat.name}}
                                 <button type="button" class="btn btn-default btn-xs" @click="removeCategory(cat)">remove</button>
                             </li>
                         </ul>
                     </div>
 
                     <autocomplete v-model="category" url="/api/autocomplete/categories" @select="selectCategory" data_source="categories">
-                        <li slot="link"><router-link to="/categories">Manage categories</router-link></li>
+                        <li slot="link"><router-link tabindex="-1" to="/categories">Manage categories</router-link></li>
                     </autocomplete>
 
                     <!-- <input type="text" id="category" class="form-control" v-model="category" @keyup="searchCategories" ref="category" autocomplete="off">
@@ -119,7 +119,7 @@ export default {
                 dewey: {},
                 selected_category_ids: []
             },
-            selectedCategories: [],
+            // selectedCategories: [],
             publishers: [],
             publishing_places: [],
             deweys: [],
@@ -137,10 +137,12 @@ export default {
             let action = id ? 'put' : 'post';
             let url = id ? `/api/books/${id}` : '/api/books'
 
-            this.book.selected_category_ids = this.selectedCategoriesIDs();
+            // this.book.selected_category_ids = this.selectedCategoriesIDs();
 
             this.book.publisher_name = this.book.publisher.name;
             this.book.publishing_place_name = this.book.publishing_place.name;
+
+            console.log('before save', this.book);
 
             axios[action](url,
                 this.book,
@@ -152,8 +154,12 @@ export default {
             });
         },
         selectDewey(dewey){
-            this.book.dewey = dewey;
-            this.book.dewey_id = dewey.id;
+            if(dewey && typeof dewey === "object"){
+                this.book.dewey = dewey;
+                this.book.dewey_id = dewey.id;
+            } else {
+                this.book.dewey = {display: dewey};
+            }
         },
         // searchCategories(){
         //     if(this.category.length > 0){
@@ -177,20 +183,26 @@ export default {
                 cat = {name: cat};
             }
 
-            if(this.selectedCategories.filter(c => {return c.name == cat.name}).length > 0){
+            if(!this.book.categories){
+                this.book.categories = [cat];
+                this.category = '';
                 return;
             }
 
-            this.selectedCategories.push(cat);
+            if(this.book.categories.filter(c => {return c.name == cat.name}).length > 0){
+                return;
+            }
+
+            this.book.categories.push(cat);
             this.category = '';
         },
         removeCategory(cat){
-            this.selectedCategories = this.selectedCategories.filter(c => {
+            this.book.categories = this.book.categories.filter(c => {
                 return c != cat;
             });
         },
         selectedCategoriesIDs(){
-            return this.selectedCategories.map(c => {return c.id});
+            return this.book.categories.map(c => {return c.id});
         }
     },
     created(){
@@ -206,8 +218,11 @@ export default {
                     
                     if(!this.book.dewey)
                         this.book.dewey = {};
+                    
+                    if(!this.book.categories)
+                        this.book.categories = [];
 
-                    this.selectedCategories = this.book.categories;
+                    // this.selectedCategories = this.book.categories;
                 });
         }
     }

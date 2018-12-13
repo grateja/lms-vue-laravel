@@ -35,9 +35,9 @@ class Book extends Model
 
     public function attachPublisher($publisher_name) {
         if($publisher_name) {
-            $publisher =
-                Publisher::where('name', '=', $publisher_name)->first() ??
-                Publisher::create(['name' => $publisher_name]);
+            $publisher = Publisher::firstOrCreate(
+                ['name' => $publisher_name]
+            );
             
             $this->update(['publisher_id' => $publisher->id]);
 
@@ -51,9 +51,9 @@ class Book extends Model
 
     public function attachPublishingPlace($publishing_place_name) {
         if($publishing_place_name) {
-            $publishing_place =
-                PublishingPlace::where('name', '=', $publishing_place_name)->first() ??
-                PublishingPlace::create(['name' => $publishing_place_name]);
+            $publishing_place = PublishingPlace::firstOrCreate(
+                ['name' => $publishing_place_name]
+            );
 
             $this->update(['publishing_place_id' => $publishing_place->id]);
 
