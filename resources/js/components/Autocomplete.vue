@@ -1,7 +1,8 @@
 <template>
     <div class="autocomplete">
+        {{typing}}
         <input type="text" @input="search($event.target.value)" :id="id" :value="value" ref="keyword" :class="class_name" @blur="blur" autocomplete="off" @keyup="keyup" @keydown.enter.prevent="keydown">
-        <ul v-if="items.length > 0">
+        <ul v-if="(items.length > 0) && !typing">
             <li v-for="(item, i) in items" :key="item[data_field]" @click="select(item)" :class="{active: i == selectedIndex}" >{{item[data_display]}}</li>
             <slot name="link"></slot>
         </ul>
@@ -9,6 +10,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 export default {
     props:{
         url: {},
@@ -29,22 +32,63 @@ export default {
     data(){
         return {
             items: [],
-            selectedIndex: -1
+            selectedIndex: -1,
+            oldval:'',
+            cancelSource: null,
+            typing: false
         }
     },
     methods: {
         search(val){
             this.$emit('input', val);
+
+            if(this.oldval != val) {
+                this.oldval = val;
+            } else {
+                return;
+            }
+
+            this.cancelSearch();
+            this.cancelSource = axios.CancelToken.source();
+
             if(val.length > 0){
                 axios.get(this.url, {
-                    params: {keyword: val}
+                    params: {keyword: val},
+                    cancelToken: this.cancelSource.token
                 }).then((res, rej) => {
                     this.items = res.data[this.data_source];
+                }).catch(err => {
+                    // console.log(err);
                 });
             } else {
                 this.items = [];
             }
         },
+        cancelSearch(){
+            if(this.cancelSource){
+                this.cancelSource.cancel();
+            }
+        },
+        // search: _.debounce(function(val){
+        //     this.$emit('input', val);
+
+        //     if(this.oldval != val) {
+        //         this.oldval = val;
+        //     } else {
+        //         return;
+        //     }
+
+        //     if(val.length > 0){
+        //         axios.get(this.url, {
+        //             params: {keyword: val},
+        //             cancelToken: source.token
+        //         }).then((res, rej) => {
+        //             this.items = res.data[this.data_source];
+        //         });
+        //     } else {
+        //         this.items = [];
+        //     }
+        // }, 300),
         select(item){
             this.items = [];
             this.selectedIndex = -1;
@@ -56,7 +100,7 @@ export default {
             setTimeout(() => {
                 this.items = [];
                 this.selectedIndex = -1;
-            }, 500);
+            }, 200);
         },
         keyup(event){
             console.log(event.which);
@@ -89,6 +133,12 @@ export default {
                         break;
                 }
                 this.navigate(this.items[this.selectedIndex])
+            } else {
+                this.items = [];
+                this.typing = true;
+                setTimeout(() => {
+                    this.typing = false;
+                }, 300);
             }
         },
         keydown(){

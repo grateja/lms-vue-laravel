@@ -8,7 +8,8 @@ use App\Publisher;
 class PublishersController extends Controller
 {
     public function autocomplete(Request $request){
-        $publishers = Publisher::where('name', 'like', "$request->keyword%")
+        $publishers = Publisher::where('name', 'like', "%$request->keyword%")
+            ->orderBy('name')
             ->limit(10)
             ->select(['id', 'name'])
             ->get();
