@@ -69,27 +69,8 @@ export default {
                 this.cancelSource.cancel();
             }
         },
-        // search: _.debounce(function(val){
-        //     this.$emit('input', val);
-
-        //     if(this.oldval != val) {
-        //         this.oldval = val;
-        //     } else {
-        //         return;
-        //     }
-
-        //     if(val.length > 0){
-        //         axios.get(this.url, {
-        //             params: {keyword: val},
-        //             cancelToken: source.token
-        //         }).then((res, rej) => {
-        //             this.items = res.data[this.data_source];
-        //         });
-        //     } else {
-        //         this.items = [];
-        //     }
-        // }, 300),
         select(item){
+            this.cancelSearch();
             this.items = [];
             this.selectedIndex = -1;
             this.$refs.keyword.focus();
@@ -97,6 +78,7 @@ export default {
             this.$emit('select', item);
         },
         blur(){
+            this.cancelSearch();
             setTimeout(() => {
                 this.items = [];
                 this.selectedIndex = -1;

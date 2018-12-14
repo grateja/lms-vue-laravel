@@ -16859,28 +16859,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.cancelSource.cancel();
             }
         },
-
-        // search: _.debounce(function(val){
-        //     this.$emit('input', val);
-
-        //     if(this.oldval != val) {
-        //         this.oldval = val;
-        //     } else {
-        //         return;
-        //     }
-
-        //     if(val.length > 0){
-        //         axios.get(this.url, {
-        //             params: {keyword: val},
-        //             cancelToken: source.token
-        //         }).then((res, rej) => {
-        //             this.items = res.data[this.data_source];
-        //         });
-        //     } else {
-        //         this.items = [];
-        //     }
-        // }, 300),
         select: function select(item) {
+            this.cancelSearch();
             this.items = [];
             this.selectedIndex = -1;
             this.$refs.keyword.focus();
@@ -16890,6 +16870,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         blur: function blur() {
             var _this2 = this;
 
+            this.cancelSearch();
             setTimeout(function () {
                 _this2.items = [];
                 _this2.selectedIndex = -1;
