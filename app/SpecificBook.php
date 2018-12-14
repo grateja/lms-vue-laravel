@@ -7,6 +7,8 @@ use App\Book;
 
 class SpecificBook extends Model
 {
+    protected $fillable = ['unique_id','book_id', 'availability'];
+
     public function book()
     {
         return $this->belongsTo(Book::class);
@@ -14,5 +16,14 @@ class SpecificBook extends Model
 
     public function condition(){
         return $this->belongsTo(BookCondition::class);
+    }
+
+    public static function generateUniqueID(){
+        $val = rand(100000000, 999999999);
+        if(!SpecificBook::where(['unique_id' => $val])->first()){
+            return $val;
+        }
+
+        return SpecificBook::generateUniqueID();
     }
 }

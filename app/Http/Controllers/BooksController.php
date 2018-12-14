@@ -55,6 +55,7 @@ class BooksController extends Controller
             $book->attachPublisher($request->publisher_name);
             $book->attachPublishingPlace($request->publishing_place_name);
             $book->attachCategories(collect($request->categories));
+            $book->createBooks($request->number_of_copies);
 
             return response()->json([
                 'book' => $book

@@ -1,6 +1,12 @@
 <template>
     <div class="book">
         <h3>This is a fucking book</h3>
+        <router-link :to="`/individual-books/${book.id}`">View all</router-link>
+        <h5>Available books</h5>
+        <pre>
+{{availableBooks}}
+        </pre>
+        <hr>
         <pre>
 {{book}}
         </pre>
@@ -29,6 +35,14 @@ export default {
                         this.$router.push('/books');
                     });
             }
+        }
+    },
+    computed: {
+        availableBooks(){
+            if(this.book.books)
+                return this.book.books.filter(book => {
+                    return book.availability === 'available';
+                });
         }
     },
     created(){

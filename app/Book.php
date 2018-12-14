@@ -84,6 +84,17 @@ class Book extends Model
         }
     }
 
+    public function createBooks($copies) {
+        for ($i=0; $i < $copies; $i++) {
+            $this->createBook();
+        }
+    }
+
+    public function createBook($unique_id = null) {
+        $unique_id = $unique_id ?? SpecificBook::generateUniqueID();
+        return SpecificBook::create(['unique_id' => $unique_id, 'book_id' => $this->id]);
+    }
+
     public static function generateTypeID() {
         $val = rand(100000000, 999999999);
         if(!Book::where(['type_id' => $val])->first()){

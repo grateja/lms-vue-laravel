@@ -34,6 +34,16 @@ let routes = [
                 component: require('./views/publishers/PublisherList.vue')
             }
         ]
+    },
+    {
+        path: '/individual-books',
+        component: require('./views/individual-books/Index.vue'),
+        children: [
+            {
+                path: ':id',
+                component: require('./views/individual-books/ViewAll.vue')
+            }
+        ]
     }
 ];
 
