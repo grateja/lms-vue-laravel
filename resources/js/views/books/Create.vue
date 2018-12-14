@@ -24,6 +24,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="number_of_copies">Number of copies:</label>
+                    <input type="number" id="number_of_copies" v-model="number_of_copies" class="form-control">
+                </div>
+
+                <div class="form-group">
                     <label for="title">Title :</label>
                     <input type="text" id="title" class="form-control" v-model="book.title">
                     <span class="text-danger" v-show="errors.has('title')" v-text="errors.get('title')"></span>
@@ -119,6 +124,7 @@ export default {
                 dewey: {},
                 selected_category_ids: []
             },
+            number_of_copies: 1,
             automatic_type_id: null,
             publishers: [],
             publishing_places: [],
@@ -139,6 +145,7 @@ export default {
 
             this.book.publisher_name = this.book.publisher.name;
             this.book.publishing_place_name = this.book.publishing_place.name;
+            this.book.number_of_copies = this.number_of_copies;
 
             if(this.automatic_type_id) {
                 this.book.type_id = null;

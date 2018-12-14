@@ -16525,6 +16525,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -16542,6 +16547,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 dewey: {},
                 selected_category_ids: []
             },
+            number_of_copies: 1,
             automatic_type_id: null,
             publishers: [],
             publishing_places: [],
@@ -16565,6 +16571,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             this.book.publisher_name = this.book.publisher.name;
             this.book.publishing_place_name = this.book.publishing_place.name;
+            this.book.number_of_copies = this.number_of_copies;
 
             if (this.automatic_type_id) {
                 this.book.type_id = null;
@@ -34298,6 +34305,34 @@ var render = function() {
                 ],
                 staticClass: "text-danger",
                 domProps: { textContent: _vm._s(_vm.errors.get("type_id")) }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "number_of_copies" } }, [
+                _vm._v("Number of copies:")
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.number_of_copies,
+                    expression: "number_of_copies"
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: { type: "number", id: "number_of_copies" },
+                domProps: { value: _vm.number_of_copies },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.number_of_copies = $event.target.value
+                  }
+                }
               })
             ]),
             _vm._v(" "),

@@ -33,6 +33,10 @@ class Book extends Model
             ->select(['categories.id','categories.name', 'categories.description']);
     }
 
+    public function books(){
+        return $this->hasMany(SpecificBook::class);
+    }
+
     public function attachPublisher($publisher_name) {
         if($publisher_name) {
             $publisher = Publisher::firstOrCreate(
@@ -87,4 +91,5 @@ class Book extends Model
         }
         return Book::generateTypeID();
     }
+
 }
