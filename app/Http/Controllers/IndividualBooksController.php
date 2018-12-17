@@ -16,10 +16,13 @@ class IndividualBooksController extends Controller
      */
     public function index(Request $request)
     {
+        return $request;
         $book = Book::with(['books' => function($query) use ($request){
                 $query->where('unique_id', 'like', "%$request->keyword%");
-            }])->find($request->book_id);
+            }])->find($request->bid);
         // $books = $book->books->where('unique_id', 'like', "%$request->keyword%")->get();
+
+        // $book = Book::find()
 
         return response()->json([
             'book' => $book
@@ -55,13 +58,20 @@ class IndividualBooksController extends Controller
      */
     public function show($id, Request $request)
     {
-        $book = Book::with(['books' => function($query) use ($request){
-            $query->where('unique_id', 'like', "%$request->keyword%");
-        }])->find($id);
+        $book = Book::find($id);
+
+        $books = $book->books()->with('condition')->where('unique_id', 'like', "%$request->keyword%")->paginate(10);
+
+        // $book = Book::with(['books' => function($query) use ($request){
+        //     return $query->where('unique_id', 'like', "%$request->keyword%")->with('condition')->paginate(10);
+        // }])->find($id);
         // $books = $book->books->where('unique_id', 'like', "%$request->keyword%")->get();
 
         return response()->json([
-            'book' => $book
+            'data' => [
+                'book' => $book,
+                'books' => $books
+            ]
         ], 200);
     }
 
