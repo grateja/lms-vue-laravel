@@ -95,7 +95,18 @@ class IndividualBooksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $book = SpecificBook::find($id);
+
+        $book->update($request->only(['unique_id', 'condition_id']));
+
+        if($request->apply_all_condition) {
+            SpecificBook::where(['book_id' => $book->book_id])
+                ->update(['condition_id' => $request->condition_id]);
+        }
+
+        return response()->json([
+            'book' => $book->fresh('condition')
+        ], 200);
     }
 
     /**
@@ -106,6 +117,10 @@ class IndividualBooksController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $book = SpecificBook::find($id);
+        $book->delete();
+        return response()->json([
+            'data' => 'Deleted successfully'
+        ], 200);
     }
 }

@@ -24,6 +24,7 @@ Route::resource('deweys', 'DeweysController');
 Route::resource('publishers', 'PublishersController');
 Route::resource('publishing-places', 'PublishingPlacesController');
 Route::resource('categories', 'CategoriesController');
+Route::resource('book-conditions', 'BookConditionsController');
 
 Route::resource('individual-books', 'IndividualBooksController');
 

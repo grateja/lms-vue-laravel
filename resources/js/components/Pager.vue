@@ -20,6 +20,7 @@ export default {
     },
     methods: {
         navigate(page){
+            this.$emit('beforeNavigate', page);
             this.$router.push(`${this.uri}?page=${page}`);
             this.$emit('navigate', page);
         }

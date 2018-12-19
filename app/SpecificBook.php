@@ -7,7 +7,7 @@ use App\Book;
 
 class SpecificBook extends Model
 {
-    protected $fillable = ['unique_id','book_id', 'availability'];
+    protected $fillable = ['unique_id','book_id', 'availability', 'condition_id'];
 
     public function book()
     {
