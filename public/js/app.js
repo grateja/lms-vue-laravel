@@ -1473,6 +1473,7 @@ window.Vue = __WEBPACK_IMPORTED_MODULE_0_vue___default.a;
 window.axios = __WEBPACK_IMPORTED_MODULE_1_axios___default.a;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// window.axios.defaults.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjE0ZTMzMmQ4YTFjYzVhYWMzZjI0YjBjNWZjMzY4NjUyNjkwNzUyNjU4YmZmZDRhMGY5ZDdlOWEyYzdkOGMwODdlZGYyNWM2ZDdhODE3ODRkIn0.eyJhdWQiOiIzIiwianRpIjoiMTRlMzMyZDhhMWNjNWFhYzNmMjRiMGM1ZmMzNjg2NTI2OTA3NTI2NThiZmZkNGEwZjlkN2U5YTJjN2Q4YzA4N2VkZjI1YzZkN2E4MTc4NGQiLCJpYXQiOjE1NDU1NDE5NDMsIm5iZiI6MTU0NTU0MTk0MywiZXhwIjoxNTc3MDc3OTQzLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.OTeInuQ7qs5QthW5eZnOj-Lj3y5tVCR6yewMVALEeoh7nV1Vey8eNdRe_4dYOO3bXXsfn--FxSwS699UYljprxfGaa9H54815h1pbRzFuEoYv5u8GOt2N3ZBdXBnFz4GWdr79642OAQW5tSMNjJMaagCxjHxRr3UZ8lkujnV3kDkjB5wJitVh3AbX2N794kBU8PiXpFykm-0MaRb1xUflt7UzQ82iewlJkRKLxDJHjMgRCN6XpXNGuMYhY5KcjpnAKkPQp1lDOpRe1DGY7YdIogkMIuZIDiiWprd73borCmLIMJOpaFW_KAXiKOqu98WHCVo0yZFRRxVkdxhE-RsMWAYPvzOB0qI6AE-lFFGMdvfTo5948fXF0zOjjUpQyoT1oY7jACOSSipstdByoKQb4s2-Fz4-ej29IDgqVu5E9C1Bb6rvp6BCU4W88qBl1yPcXwm_Z5mlqvQlWTXzewltDDi7N5Yv9ZA86qbahvcL92xAerAaJ1A3XTkfCMYObPunpmS-e8lhgfToIJpRewczo69gfC-jSf7mcsb48K2uOFEIfkDtRpR01fgmAQwiOwVrrnl7F5CT1pd-GDNyj9rxfXihwN9BI6i0UlfwN7IAUwXWngUmeKtl8_p-TOkMP3eDcHkdZ2XChkU5Q067wcwdaLQa5EUh1BnDYm6RwqXvQY';
 
 window.$ = __webpack_require__(54);
 
@@ -1482,12 +1483,15 @@ window.$ = __webpack_require__(54);
  * a simple convenience so we don't have to attach every token manually.
  */
 
-var token = document.head.querySelector('meta[name="csrf-token"]');
+//let token = document.head.querySelector('meta[name="csrf-token"]');
+var token = localStorage.getItem('token');
 
 if (token) {
-  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+  //window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+  window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 } else {
-  console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+  console.log('not logged in');
+  // console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
 /**
@@ -49205,6 +49209,8 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__login__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__login___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__login__);
 //
 //
 //
@@ -49213,8 +49219,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-    name: 'oauth'
+    name: 'oauth',
+    components: {
+        login: __WEBPACK_IMPORTED_MODULE_0__login___default.a
+    }
 });
 
 /***/ }),
@@ -49227,8 +49239,8 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "oauth" },
-    [_c("h3", [_vm._v("OAuth")]), _vm._v(" "), _c("passport-clients")],
+    { staticClass: "container" },
+    [_c("h3", [_vm._v("OAuth")]), _vm._v(" "), _c("login")],
     1
   )
 }
@@ -49247,6 +49259,203 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 104 */,
+/* 105 */,
+/* 106 */,
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(0)
+/* script */
+var __vue_script__ = __webpack_require__(108)
+/* template */
+var __vue_template__ = __webpack_require__(109)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/views/oauth/login.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5bcb857c", Component.options)
+  } else {
+    hotAPI.reload("data-v-5bcb857c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 108 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'login',
+    data: function data() {
+        return {
+            credentials: {
+                email: '',
+                password: ''
+            }
+        };
+    },
+
+    methods: {
+        login: function login() {
+            axios.post('/api/auth/login', this.credentials).then(function (res) {
+                localStorage.setItem('token', res.data.access_token);
+                console.log(res);
+            }).catch(function (err) {
+                console.log(err);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 109 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "login" }, [
+    _c(
+      "form",
+      {
+        attrs: { method: "POST" },
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.login($event)
+          }
+        }
+      },
+      [
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "email" } }, [_vm._v("Email:")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.credentials.email,
+                expression: "credentials.email"
+              }
+            ],
+            staticClass: "form-control input-sm",
+            attrs: { type: "text", id: "email" },
+            domProps: { value: _vm.credentials.email },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.credentials, "email", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "password" } }, [_vm._v("Password:")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.credentials.password,
+                expression: "credentials.password"
+              }
+            ],
+            staticClass: "form-control input-sm",
+            attrs: { type: "password", id: "password" },
+            domProps: { value: _vm.credentials.password },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.credentials, "password", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _vm._m(0)
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group" }, [
+      _c("input", { attrs: { type: "submit", value: "Login" } })
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-5bcb857c", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

@@ -10,6 +10,7 @@ window.Vue = Vue;
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// window.axios.defaults.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjE0ZTMzMmQ4YTFjYzVhYWMzZjI0YjBjNWZjMzY4NjUyNjkwNzUyNjU4YmZmZDRhMGY5ZDdlOWEyYzdkOGMwODdlZGYyNWM2ZDdhODE3ODRkIn0.eyJhdWQiOiIzIiwianRpIjoiMTRlMzMyZDhhMWNjNWFhYzNmMjRiMGM1ZmMzNjg2NTI2OTA3NTI2NThiZmZkNGEwZjlkN2U5YTJjN2Q4YzA4N2VkZjI1YzZkN2E4MTc4NGQiLCJpYXQiOjE1NDU1NDE5NDMsIm5iZiI6MTU0NTU0MTk0MywiZXhwIjoxNTc3MDc3OTQzLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.OTeInuQ7qs5QthW5eZnOj-Lj3y5tVCR6yewMVALEeoh7nV1Vey8eNdRe_4dYOO3bXXsfn--FxSwS699UYljprxfGaa9H54815h1pbRzFuEoYv5u8GOt2N3ZBdXBnFz4GWdr79642OAQW5tSMNjJMaagCxjHxRr3UZ8lkujnV3kDkjB5wJitVh3AbX2N794kBU8PiXpFykm-0MaRb1xUflt7UzQ82iewlJkRKLxDJHjMgRCN6XpXNGuMYhY5KcjpnAKkPQp1lDOpRe1DGY7YdIogkMIuZIDiiWprd73borCmLIMJOpaFW_KAXiKOqu98WHCVo0yZFRRxVkdxhE-RsMWAYPvzOB0qI6AE-lFFGMdvfTo5948fXF0zOjjUpQyoT1oY7jACOSSipstdByoKQb4s2-Fz4-ej29IDgqVu5E9C1Bb6rvp6BCU4W88qBl1yPcXwm_Z5mlqvQlWTXzewltDDi7N5Yv9ZA86qbahvcL92xAerAaJ1A3XTkfCMYObPunpmS-e8lhgfToIJpRewczo69gfC-jSf7mcsb48K2uOFEIfkDtRpR01fgmAQwiOwVrrnl7F5CT1pd-GDNyj9rxfXihwN9BI6i0UlfwN7IAUwXWngUmeKtl8_p-TOkMP3eDcHkdZ2XChkU5Q067wcwdaLQa5EUh1BnDYm6RwqXvQY';
 
 window.$ = require('jquery');
 
@@ -19,12 +20,15 @@ window.$ = require('jquery');
  * a simple convenience so we don't have to attach every token manually.
  */
 
-let token = document.head.querySelector('meta[name="csrf-token"]');
+//let token = document.head.querySelector('meta[name="csrf-token"]');
+let token = localStorage.getItem('token');
 
 if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+    //window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+    window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 } else {
-    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+    console.log('not logged in')
+    // console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
 /**

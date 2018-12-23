@@ -1,12 +1,18 @@
 <template>
-    <div class="oauth">
+    <div class="container">
         <h3>OAuth</h3>
-        <passport-clients></passport-clients>
+        <login></login>
     </div>
 </template>
 
 <script>
+
+import login from './login';
+
 export default {
-    name: 'oauth'
+    name: 'oauth',
+    components: {
+        login
+    }
 }
 </script>
