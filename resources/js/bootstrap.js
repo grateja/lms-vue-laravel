@@ -1,11 +1,17 @@
 import Vue from 'vue';
 import axios from 'axios';
 
+Vue.component('passport-clients', require('./components/passport/Clients.vue'));
+Vue.component('passport-autorized-clients', require('./components/passport/AuthorizedClients.vue'));
+Vue.component('passport-personal-access-token', require('./components/passport/PersonalAccessTokens.vue'));
+
 window.Vue = Vue;
 
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+window.$ = require('jquery');
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that

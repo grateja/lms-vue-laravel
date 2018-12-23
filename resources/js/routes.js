@@ -44,6 +44,10 @@ let routes = [
                 component: require('./views/individual-books/ViewAll.vue')
             }
         ]
+    },
+    {
+        path: '/oauth',
+        component: require('./views/oauth/Index.vue')
     }
 ];
 
